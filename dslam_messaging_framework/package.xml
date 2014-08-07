@@ -1,0 +1,53 @@
+<package>
+  <name>dslam_messaging_framework</name>
+  <version>0.1.0</version>
+  <description>
+   A bridge from dslam boards to a ros subsystem.
+  </description>
+  <url type="repository">https://bitbucket.org/yujinrobot/dslam_desktop</url>
+  <url type="bugtracker">https://bitbucket.org/yujinrobot/dslam_desktop/issues</url>
+  <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
+  <license>Yujin Robot</license>
+  <author>Daniel Stonier</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>dslam_camera</build_depend>
+  <build_depend>dslam_common</build_depend>
+  <build_depend>dslam_ecto_utils</build_depend>
+  <build_depend>dslam_ecto_vision</build_depend>
+  <build_depend>dslam_rosmsg_conversions</build_depend>
+  <build_depend>dslam_slam</build_depend>
+  <build_depend>ecl_linear_algebra</build_depend>
+  <build_depend>ecl_streams</build_depend>
+  <build_depend>ecl_threads</build_depend>
+  <build_depend>ecl_time</build_depend>
+  <build_depend>ecto</build_depend>
+  <build_depend>ecto_ros</build_depend>
+  <build_depend>gsocket</build_depend>
+  <build_depend>libopencv-dev</build_depend>
+  <build_depend>rostime</build_depend>
+  <build_depend>sophus</build_depend>
+
+  <run_depend>dslam_camera</run_depend>
+  <run_depend>dslam_common</run_depend>
+  <run_depend>dslam_ecto_utils</run_depend>
+  <run_depend>dslam_ecto_vision</run_depend>
+  <run_depend>dslam_rosmsg_conversions</run_depend>  <!-- odom2sophus -->
+  <run_depend>dslam_slam</run_depend>
+  <run_depend>ecl_linear_algebra</run_depend>        <!-- odom2sophus -->
+  <run_depend>ecl_streams</run_depend>
+  <run_depend>ecl_threads</run_depend>
+  <run_depend>ecl_time</run_depend>
+  <run_depend>ecto</run_depend>
+  <run_depend>ecto_ros</run_depend>
+  <run_depend>gsocket</run_depend>
+  <run_depend>libopencv-dev</run_depend>
+  <run_depend>rostime</run_depend>
+  <run_depend>sophus</run_depend>
+
+  <!-- runtime only packages -->
+  <run_depend>rviz</run_depend>
+  <run_depend>rosbag</run_depend>
+
+</package>
