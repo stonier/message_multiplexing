@@ -1,0 +1,23 @@
+<package>
+  <name>dslam_message_runtime</name>
+  <version>0.1.0</version>
+  <description>
+   Runtime mechanisms for dslam messaging.
+  </description>
+  <url type="repository">https://bitbucket.org/yujinrobot/dslam_messages</url>
+  <url type="bugtracker">https://bitbucket.org/yujinrobot/dslam_messages/issues</url>
+  <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
+  <license>Yujin Robot</license>
+  <author>Daniel Stonier</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>ecl_build</build_depend>
+  <build_depend>ecl_time</build_depend>
+  <build_depend>nanomsg</build_depend>
+
+  <run_depend>ecl_build</run_depend>
+  <run_depend>ecl_time</run_depend>
+  <run_depend>nanomsg</run_depend>
+
+</package>
