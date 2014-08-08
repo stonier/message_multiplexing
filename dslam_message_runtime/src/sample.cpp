@@ -33,6 +33,7 @@ int server (const char *url)
   int sock = nn_socket (AF_SP, NN_PUB);
   assert (sock >= 0);
   assert (nn_bind (sock, url) >= 0);
+  std::cout << "Asserted bind on " << url << std::endl;
   while (1)
     {
       char *d = date();
@@ -54,7 +55,7 @@ int client (const char *url, const char *name)
   assert (nn_setsockopt (sock, NN_SUB, NN_SUB_SUBSCRIBE, "", 0) >= 0);
   std::cout << "Asserted nn_setsockopt" << std::endl;
   assert (nn_connect (sock, url) >= 0);
-  std::cout << "Asserted nn_connect" << std::endl;
+  std::cout << "Asserted nn_connect on " << url << std::endl;
   while (1)
     {
     std::cout << "Receiving"<< std::endl;
