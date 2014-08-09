@@ -29,18 +29,18 @@ namespace dslam {
 
 class MessageMux {
 public:
-  typedef std::map<std::string, std::string> name_map;
-  typedef std::map<std::string, std::string>::iterator name_map_iterator;
-  typedef std::map<std::string, std::string>::const_iterator name_map_const_iterator;
+  typedef std::map<std::string, std::string> MuxMap;
+  typedef std::map<std::string, std::string>::iterator MuxMapIterator;
+  typedef std::map<std::string, std::string>::const_iterator MuxMapConstIterator;
 
   enum {
     DanglingConnection = 0,
   };
 
-  static void registerMultiplexer(const std::string& name, const std::string& url);
+  static void registerMux(const std::string& name, const std::string& url);
   static int createPublisher(const std::string& name, const std::string& url = "");
   static int createSubscriber(const std::string& name, const std::string& url = "");
-  static name_map& topics();
+  static MuxMap& multiplexers();
 };
 
 } // dslam

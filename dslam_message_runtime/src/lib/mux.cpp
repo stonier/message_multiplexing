@@ -26,11 +26,11 @@ namespace dslam {
  * @param name
  * @param url
  */
-void MessageMux::registerMultiplexer(const std::string& name, const std::string& url) {
-  name_map_const_iterator iter = topics().find(name);
-  if ( iter == topics().end() ) {
-    std::pair<name_map_iterator,bool> result;
-    result = topics().insert(std::pair<std::string, std::string>(name, url));
+void MessageMux::registerMux(const std::string& name, const std::string& url) {
+  MuxMapConstIterator iter = multiplexers().find(name);
+  if ( iter == multiplexers().end() ) {
+    std::pair<MuxMapIterator,bool> result;
+    result = multiplexers().insert(std::pair<std::string, std::string>(name, url));
   }
 }
 /**
@@ -38,7 +38,7 @@ void MessageMux::registerMultiplexer(const std::string& name, const std::string&
  *
  * As a convenience, you can optionally initialise a multiplexer for the specified url
  * at this name if it doesn't already exist. This saves from having to call
- * `registerMultiplexer` in advance.
+ * `registerMux` in advance.
  *
  * Note, the guts of this is just creating a socket at the mutliplexer url
  * which can do nanomsg style publishing.
@@ -50,10 +50,10 @@ void MessageMux::registerMultiplexer(const std::string& name, const std::string&
 int MessageMux::createPublisher(const std::string& name, const std::string& url) {
   std::cout << "Creating publisher" << std::endl;
   if ( !url.empty()) {
-    registerMultiplexer(name, url);
+    registerMux(name, url);
   }
-  name_map_const_iterator iter = topics().find(name);
-  if ( iter != topics().end() ) {
+  MuxMapConstIterator iter = multiplexers().find(name);
+  if ( iter != multiplexers().end() ) {
     int sock = nn_socket (AF_SP, NN_PUB);
     std::cout << "Socket: " << sock << std::endl;
     // TODO check >= 0, what does 0 mean?
@@ -72,17 +72,17 @@ int MessageMux::createPublisher(const std::string& name, const std::string& url)
  * @brief Create a named subscriber.
  *
  * As a convenience, you can optionally establish the url for the publisher here
- * to save from having to call `registerMultiplexer` in advance.
+ * to save from having to call `registerMux` in advance.
  * @param name
  * @param url
  * @return
  */
 int MessageMux::createSubscriber(const std::string& name, const std::string& url) {
   if ( !url.empty()) {
-    registerMultiplexer(name, url);
+    registerMux(name, url);
   }
-  name_map_const_iterator iter = topics().find(name);
-  if ( iter != topics().end() ) {
+  MuxMapConstIterator iter = multiplexers().find(name);
+  if ( iter != multiplexers().end() ) {
     int sock = nn_socket (AF_SP, NN_SUB);
     std::cout << "Socket: " << sock << std::endl;
     // TODO check >= 0, what does 0 mean?
@@ -99,8 +99,8 @@ int MessageMux::createSubscriber(const std::string& name, const std::string& url
 }
 
 
-MessageMux::name_map& MessageMux::topics() {
-  static MessageMux::name_map topic_relations;  // human consumable string - url relations
+MessageMux::MuxMap& MessageMux::multiplexers() {
+  static MessageMux::MuxMap topic_relations;  // human consumable string - url relations
   return topic_relations;
 }
 

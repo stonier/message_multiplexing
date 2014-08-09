@@ -28,14 +28,10 @@ namespace dslam {
 
 class Subscriber {
 public:
-  Subscriber(const std::string &name, const std::string &url = "");
+  Subscriber(const std::string &name);
   ~Subscriber();
-
-  void spin();
-  void spinOnce();
 private:
   std::string name;
-  int socket;
 };
 
 } // dslam
