@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/include/dslam_message_runtime/manager.hpp
+ * @file /dslam_message_runtime/include/dslam_message_runtime/multiplexer.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,8 +7,8 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef dslam_message_runtime_MANAGER_HPP_
-#define dslam_message_runtime_MANAGER_HPP_
+#ifndef dslam_message_runtime_MULTIPLEXER_HPP_
+#define dslam_message_runtime_MULTIPLEXER_HPP_
 
 /*****************************************************************************
 ** Includes
@@ -27,7 +27,7 @@ namespace dslam {
 ** Interfaces
 *****************************************************************************/
 
-class MessageManager {
+class MessageMultiplexer {
 public:
   typedef std::map<std::string, std::string> name_map;
   typedef std::map<std::string, std::string>::iterator name_map_iterator;
@@ -45,4 +45,4 @@ public:
 
 } // dslam
 
-#endif /* dslam_message_runtime_MANAGER_HPP_ */
+#endif /* dslam_message_runtime_MULTIPLEXER_HPP_ */

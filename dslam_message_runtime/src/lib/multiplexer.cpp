@@ -10,7 +10,7 @@
 #include <iostream>
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
-#include "../../include/dslam_message_runtime/manager.hpp"
+#include "../../include/dslam_message_runtime/multiplexer.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -26,7 +26,7 @@ namespace dslam {
  * @param name
  * @param url
  */
-void MessageManager::registerTopic(const std::string& name, const std::string& url) {
+void MessageMultiplexer::registerTopic(const std::string& name, const std::string& url) {
   name_map_const_iterator iter = topics().find(name);
   if ( iter == topics().end() ) {
     std::pair<name_map_iterator,bool> result;
@@ -42,7 +42,7 @@ void MessageManager::registerTopic(const std::string& name, const std::string& u
  * @param url
  * @return
  */
-int MessageManager::createPublisher(const std::string& name, const std::string& url) {
+int MessageMultiplexer::createPublisher(const std::string& name, const std::string& url) {
   std::cout << "Creating publisher" << std::endl;
   if ( !url.empty()) {
     registerTopic(name, url);
@@ -59,7 +59,7 @@ int MessageManager::createPublisher(const std::string& name, const std::string& 
     // TODO check the result
     return sock;
   } else {
-    return MessageManager::DanglingConnection;
+    return MessageMultiplexer::DanglingConnection;
   }
 }
 
@@ -72,7 +72,7 @@ int MessageManager::createPublisher(const std::string& name, const std::string& 
  * @param url
  * @return
  */
-int MessageManager::createSubscriber(const std::string& name, const std::string& url) {
+int MessageMultiplexer::createSubscriber(const std::string& name, const std::string& url) {
   if ( !url.empty()) {
     registerTopic(name, url);
   }
@@ -89,13 +89,13 @@ int MessageManager::createSubscriber(const std::string& name, const std::string&
     // TODO check the result
     return sock;
   } else {
-    return MessageManager::DanglingConnection;
+    return MessageMultiplexer::DanglingConnection;
   }
 }
 
 
-MessageManager::name_map& MessageManager::topics() {
-  static MessageManager::name_map topic_relations;  // human consumable string - url relations
+MessageMultiplexer::name_map& MessageMultiplexer::topics() {
+  static MessageMultiplexer::name_map topic_relations;  // human consumable string - url relations
   return topic_relations;
 }
 

@@ -32,6 +32,7 @@ public:
   ~Subscriber();
 
   void spin();
+  void spinOnce();
 private:
   std::string name;
   int socket;

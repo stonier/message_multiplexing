@@ -20,7 +20,7 @@ static int test_socket (int family, int protocol)
     return sock;
 }
 
-static int test_connect (int sock, char *address)
+static int test_connect (int sock, const char *address)
 {
     int rc;
     rc = nn_connect (sock, address);
@@ -29,8 +29,7 @@ static int test_connect (int sock, char *address)
     }
     return rc;
 }
-static int test_bind(
-    int sock, char *address)
+static int test_bind(int sock, const char *address)
 {
     int rc;
 
@@ -40,8 +39,7 @@ static int test_bind(
     }
     return rc;
 }
-static void test_send (
-    int sock, char *data)
+static void test_send (int sock, const char *data)
 {
     size_t data_len;
     int rc;
@@ -57,7 +55,7 @@ static void test_send (
       std::cout << "error on data to send"<< std::endl;
     }
 }
-static void test_recv (int sock, char *data)
+static void test_recv (int sock, const char *data)
 {
     size_t data_len;
     int rc;
