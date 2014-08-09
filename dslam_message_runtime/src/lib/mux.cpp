@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/src/lib/manager.cpp
+ * @file /dslam_message_runtime/src/lib/mux.cpp
  * 
  * @brief Short description of this file.
  **/
@@ -10,7 +10,7 @@
 #include <iostream>
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
-#include "../../include/dslam_message_runtime/multiplexer.hpp"
+#include "../../include/dslam_message_runtime/mux.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -26,7 +26,7 @@ namespace dslam {
  * @param name
  * @param url
  */
-void MessageMultiplexer::registerTopic(const std::string& name, const std::string& url) {
+void MessageMux::registerMultiplexer(const std::string& name, const std::string& url) {
   name_map_const_iterator iter = topics().find(name);
   if ( iter == topics().end() ) {
     std::pair<name_map_iterator,bool> result;
@@ -34,18 +34,23 @@ void MessageMultiplexer::registerTopic(const std::string& name, const std::strin
   }
 }
 /**
- * @brief Create a named publisher.
+ * @brief Create a publisher for a specified multiplexer.
  *
- * As a convenience, you can optionally establish the url for the publisher here
- * to save from having to call `registerTopic` in advance.
+ * As a convenience, you can optionally initialise a multiplexer for the specified url
+ * at this name if it doesn't already exist. This saves from having to call
+ * `registerMultiplexer` in advance.
+ *
+ * Note, the guts of this is just creating a socket at the mutliplexer url
+ * which can do nanomsg style publishing.
+ *
  * @param name
  * @param url
  * @return
  */
-int MessageMultiplexer::createPublisher(const std::string& name, const std::string& url) {
+int MessageMux::createPublisher(const std::string& name, const std::string& url) {
   std::cout << "Creating publisher" << std::endl;
   if ( !url.empty()) {
-    registerTopic(name, url);
+    registerMultiplexer(name, url);
   }
   name_map_const_iterator iter = topics().find(name);
   if ( iter != topics().end() ) {
@@ -59,7 +64,7 @@ int MessageMultiplexer::createPublisher(const std::string& name, const std::stri
     // TODO check the result
     return sock;
   } else {
-    return MessageMultiplexer::DanglingConnection;
+    return MessageMux::DanglingConnection;
   }
 }
 
@@ -67,14 +72,14 @@ int MessageMultiplexer::createPublisher(const std::string& name, const std::stri
  * @brief Create a named subscriber.
  *
  * As a convenience, you can optionally establish the url for the publisher here
- * to save from having to call `registerTopic` in advance.
+ * to save from having to call `registerMultiplexer` in advance.
  * @param name
  * @param url
  * @return
  */
-int MessageMultiplexer::createSubscriber(const std::string& name, const std::string& url) {
+int MessageMux::createSubscriber(const std::string& name, const std::string& url) {
   if ( !url.empty()) {
-    registerTopic(name, url);
+    registerMultiplexer(name, url);
   }
   name_map_const_iterator iter = topics().find(name);
   if ( iter != topics().end() ) {
@@ -89,13 +94,13 @@ int MessageMultiplexer::createSubscriber(const std::string& name, const std::str
     // TODO check the result
     return sock;
   } else {
-    return MessageMultiplexer::DanglingConnection;
+    return MessageMux::DanglingConnection;
   }
 }
 
 
-MessageMultiplexer::name_map& MessageMultiplexer::topics() {
-  static MessageMultiplexer::name_map topic_relations;  // human consumable string - url relations
+MessageMux::name_map& MessageMux::topics() {
+  static MessageMux::name_map topic_relations;  // human consumable string - url relations
   return topic_relations;
 }
 

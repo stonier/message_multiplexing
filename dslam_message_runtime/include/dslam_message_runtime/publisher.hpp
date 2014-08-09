@@ -17,7 +17,7 @@
 #include <iostream>
 #include <nanomsg/nn.h>
 #include <vector>
-#include "multiplexer.hpp"
+#include "mux.hpp"
 #include "message.hpp"
 
 /*****************************************************************************
@@ -34,7 +34,7 @@ template <typename T>
 class Publisher {
 public:
   Publisher(const std::string &name, const std::string &url = "") :
-    socket(MessageMultiplexer::createPublisher(name, url))
+    socket(MessageMux::createPublisher(name, url))
   {
     std::cout << "Created socket" << std::endl;
   }

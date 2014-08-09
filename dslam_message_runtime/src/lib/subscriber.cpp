@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include <nanomsg/nn.h>
-#include "../../include/dslam_message_runtime/multiplexer.hpp"
+#include "../../include/dslam_message_runtime/mux.hpp"
 #include "../../include/dslam_message_runtime/subscriber.hpp"
 
 // for debugging
@@ -27,7 +27,7 @@ namespace dslam {
 
 Subscriber::Subscriber(const std::string &name, const std::string &url) :
     name(name),
-    socket(MessageMultiplexer::createSubscriber(name, url))
+    socket(MessageMux::createSubscriber(name, url))
 {}
 
 Subscriber::~Subscriber() {

@@ -27,7 +27,7 @@
 
 int main(int argc, char **argv)
 {
-  dslam::MessageMultiplexer::registerTopic("dude", "ipc:///tmp/pubsub.ipc");
+  dslam::MessageMux::registerMultiplexer("dude", "ipc:///tmp/pubsub.ipc");
   if (argc > 1 && std::string(argv[1]) == "pub") {
     std::cout << "Creating publisher" << std::endl;
     dslam::Publisher<std::string> publisher("dude", "ipc:///tmp/pubsub.ipc");
