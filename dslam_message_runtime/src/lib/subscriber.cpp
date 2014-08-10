@@ -9,11 +9,9 @@
 
 #include <iostream>
 #include <nanomsg/nn.h>
+#include <string>
 #include "../../include/dslam_message_runtime/mux.hpp"
 #include "../../include/dslam_message_runtime/subscriber.hpp"
-
-// for debugging
-//#include <cstring>
 
 /*****************************************************************************
 ** Namespaces
@@ -22,14 +20,7 @@
 namespace dslam {
 
 /*****************************************************************************
-** Implementation
+** Globals
 *****************************************************************************/
-
-Subscriber::Subscriber(const std::string &name) :
-    name(name)
-{}
-
-Subscriber::~Subscriber() {
-}
 
 } // dslam

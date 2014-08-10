@@ -52,6 +52,13 @@ MessageDemux::MessageDemux(const MessageDemux& other) {
 
 MessageDemux::~MessageDemux()
 {
+  mutex.lock();
+  for(auto& pair : subscribers) {
+    delete pair.second;
+  }
+  subscribers.clear();
+  mutex.unlock();
+
   if ( socket > 0 ) {
     nn_shutdown (socket, 0);
   }
@@ -59,15 +66,30 @@ MessageDemux::~MessageDemux()
 }
 
 void MessageDemux::spin() {
+  std::cout << "Demux spinning..."<< std::endl;
   while (1)
   {
     char *buf = NULL;
-    std::cout << "Receiving..."<< std::endl;
     int bytes = nn_recv (socket, &buf, NN_MSG, 0);
     // assert (bytes >= 0);
-    std::cout << "CLIENT " << name << ": RECEIVED " << buf << "\n" << std::endl;
+    std::cout << "CLIENT " << name << ": RECEIVED " << buf << std::endl;
+    mutex.lock();
+    std::cout << "spin::got data"<< std::endl;
+    SubscriberMapIterator iter = subscribers.find(1);
+    if (iter != subscribers.end()) {
+      std::cout << "spin::relay data"<< std::endl;
+      (*(iter->second))(buf);
+    }
+    mutex.unlock();
     nn_freemsg (buf);
   }
+}
+
+void MessageDemux::unregisterSubscriber(const unsigned int& id)
+{
+  mutex.lock();
+  subscribers.erase(id);
+  mutex.unlock();
 }
 
 } // namespace impl
@@ -90,8 +112,7 @@ void MessageDemux::registerDemux(const std::string& name,
   if ( iter == demultiplexers().end() ) {
     std::pair<DemuxMapIterator,bool> result;
     result = demultiplexers().insert(
-        DemuxMapPair(name,
-                     std::make_shared<impl::MessageDemux>(name, url)));
+        DemuxMapPair(name, std::make_shared<impl::MessageDemux>(name, url)));
   }
 }
 
@@ -104,6 +125,17 @@ MessageDemux::DemuxMap& MessageDemux::demultiplexers()
   static MessageDemux::DemuxMap map;  // string - demux storage in an invisible location
   return map;
 }
+
+void MessageDemux::unregisterSubscriber(const std::string& name, const unsigned int& id)
+{
+  DemuxMapIterator iter = demultiplexers().find(name);
+  if ( iter != demultiplexers().end() ) {
+    (iter->second)->unregisterSubscriber(id);
+  } else {
+    std::cout << "Demux : no demux by that name found (while unregistering subscriber)"<< std::endl;
+  }
+}
+
 
 
 } // namespace dslam

@@ -11,7 +11,7 @@
 #include <string>
 #include "../include/dslam_message_runtime/publisher.hpp"
 #include "../include/dslam_message_runtime/demux.hpp"
-//#include "../include/dslam_message_runtime/subscriber.hpp"
+#include "../include/dslam_message_runtime/subscriber.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -23,7 +23,14 @@
 #include <unistd.h>
 
 /*****************************************************************************
-** Implementation
+** Methods
+*****************************************************************************/
+
+void foo(const std::string& data) {
+  std::cout << "foo is processing data: " << data << std::endl;
+}
+/*****************************************************************************
+** Main
 *****************************************************************************/
 
 int main(int argc, char **argv)
@@ -41,6 +48,7 @@ int main(int argc, char **argv)
   } else if (argc > 1 && std::string(argv[1]) == "sub") {
     dslam::MessageDemux::registerDemux("dude", "ipc:///tmp/pubsub.ipc");
     std::cout << "Creating demux"<< std::endl;
+    dslam::Subscriber<std::string, 1> subscriber("dude", foo);
     while(true) {
       ecl::MilliSleep()(200);
     }

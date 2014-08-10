@@ -11,7 +11,9 @@ project(dslam_message_runtime)
 
 find_package(catkin REQUIRED COMPONENTS
     ecl_build
+    ecl_threads
     ecl_time
+    ecl_utilities
     nanomsg
 )
 
@@ -24,7 +26,9 @@ catkin_package(
     LIBRARIES ${PROJECT_NAME}
     CATKIN_DEPENDS
         ecl_build
+        ecl_threads
         ecl_time
+        ecl_utilities
         nanomsg
 )
 
