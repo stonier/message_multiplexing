@@ -31,22 +31,6 @@ namespace to_be_deprecated {
 *****************************************************************************/
 
 /**
- * @brief Move bytes from a variable into the back end of a buffer.
- *
- * This covers just the fundamental types.
- *
- * @param value
- * @param buffer
- */
-template<typename T>
-void buildBytes(const T & value, ByteArray& buffer) {
-  unsigned int size_value(sizeof (T));
-  for (unsigned int i = 0; i < size_value; i++) {
-    buffer.push_back(static_cast<unsigned char> ((value >> (i * 8)) & 0xff));
-  }
-}
-
-/**
  * @brief Build fundamental variables from a received buffer (decode).
  *
  * This is the reverse of the buildBytes function for simple variables.
@@ -54,7 +38,7 @@ void buildBytes(const T & value, ByteArray& buffer) {
  * @param buffer
  */
 template<typename T>
-void buildVariable(T & value, ByteArray& buffer) {
+void buildVariable(T & value, std::vector<unsigned char>& buffer) {
   if (buffer.size() < sizeof (T))
     return;
   value = static_cast<unsigned char> (buffer[0]);

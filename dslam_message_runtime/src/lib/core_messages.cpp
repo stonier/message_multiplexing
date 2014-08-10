@@ -20,10 +20,15 @@ namespace dslam {
 *****************************************************************************/
 
 void Message<PacketHeader>::encode(const PacketHeader& header, ByteArray& buffer) {
-  to_be_deprecated::buildBytes(header.signature(), buffer);
-  to_be_deprecated::buildBytes(header.id(), buffer);
-  to_be_deprecated::buildBytes(header.reserved(), buffer);
-  to_be_deprecated::buildBytes(header.length(), buffer);
+  // This is the header...the buffer should be clear anyway.
+  buffer.resize(PacketHeader::size);
+
+  ecl::Converter<ByteStencil, unsigned int> to_byte_array;
+  unsigned int size = sizeof(header.signature());
+  ByteStencil stencil(buffer, buffer.begin(), buffer.begin() + size); to_byte_array(stencil, header.signature());
+  stencil = ByteStencil(buffer, buffer.begin() +   size, buffer.begin() + 2*size); to_byte_array(stencil, header.id());
+  stencil = ByteStencil(buffer, buffer.begin() + 2*size, buffer.begin() + 3*size); to_byte_array(stencil, header.reserved());
+  stencil = ByteStencil(buffer, buffer.begin() + 3*size, buffer.begin() + 4*size); to_byte_array(stencil, header.length());
 }
 
 PacketHeader Message<PacketHeader>::decode(const unsigned char* buffer, const unsigned int& size) {

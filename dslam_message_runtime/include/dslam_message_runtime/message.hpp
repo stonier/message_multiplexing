@@ -14,6 +14,7 @@
 ** Includes
 *****************************************************************************/
 
+#include <ecl/containers.hpp>
 #include <iostream>
 #include <vector>
 
@@ -23,7 +24,9 @@
 
 namespace dslam {
 
+//typedef ecl::Array<unsigned char> ByteArray;
 typedef std::vector<unsigned char> ByteArray;
+typedef ecl::Stencil<ByteArray> ByteStencil;
 
 /*****************************************************************************
 ** Interfaces
