@@ -17,9 +17,9 @@
 #include <ecl/utilities/function_objects.hpp>
 #include <string>
 #include "demux.hpp"
-#include "core_messages.hpp"
 #include "header.hpp"
-#include "message.hpp"
+#include "messages.hpp"
+#include "messages/core.hpp"
 
 /*****************************************************************************
 ** Namespaces

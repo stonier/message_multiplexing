@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/include/dslam_message_runtime/message.hpp
+ * @file /dslam_message_runtime/include/dslam_message_runtime/messages.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,8 +7,8 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef dslam_message_runtime_MESSAGE_HPP_
-#define dslam_message_runtime_MESSAGE_HPP_
+#ifndef dslam_message_runtime_MESSAGES_HPP_
+#define dslam_message_runtime_MESSAGES_HPP_
 
 /*****************************************************************************
 ** Includes
@@ -46,4 +46,4 @@ struct Message {
 
 } // dslam
 
-#endif /* dslam_message_runtime_MESSAGE_HPP_ */
+#endif /* dslam_message_runtime_MESSAGES_HPP_ */

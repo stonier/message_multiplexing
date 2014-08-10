@@ -17,9 +17,9 @@
 #include <iostream>
 #include <nanomsg/nn.h>
 #include <vector>
-#include "core_messages.hpp"
 #include "header.hpp"
-#include "message.hpp"
+#include "messages.hpp"
+#include "messages/core.hpp"
 #include "mux.hpp"
 
 /*****************************************************************************

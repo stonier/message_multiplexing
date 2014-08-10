@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/src/lib/core_messages.cpp
+ * @file /dslam_message_runtime/src/lib/messages/core.cpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,7 +7,7 @@
 ** Includes
 *****************************************************************************/
 
-#include "../../include/dslam_message_runtime/core_messages.hpp"
+#include "../../../include/dslam_message_runtime/messages/core.hpp"
 
 /*****************************************************************************
 ** Namespaces

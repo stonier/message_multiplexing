@@ -12,7 +12,7 @@
 #include <nanomsg/pubsub.h>
 #include "../../include/dslam_message_runtime/demux.hpp"
 #include "../../include/dslam_message_runtime/header.hpp"
-#include "../../include/dslam_message_runtime/core_messages.hpp"
+#include "../../include/dslam_message_runtime/messages/core.hpp"
 
 /*****************************************************************************
 ** Namespaces

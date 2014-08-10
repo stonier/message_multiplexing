@@ -15,9 +15,9 @@
 *****************************************************************************/
 
 #include <string>
-#include "header.hpp"
-#include "message.hpp"
-#include "to_be_deprecated/builders.hpp"
+#include "../header.hpp"
+#include "../messages.hpp"
+#include "../to_be_deprecated/builders.hpp"
 
 /*****************************************************************************
 ** Namespaces
