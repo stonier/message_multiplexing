@@ -38,11 +38,11 @@ int main(int argc, char **argv)
   if (argc > 1 && std::string(argv[1]) == "pub") {
     dslam::MessageMux::registerMux("dude", "ipc:///tmp/pubsub.ipc");
     std::cout << "Creating publisher" << std::endl;
-    dslam::Publisher<std::string> publisher("dude", "ipc:///tmp/pubsub.ipc");
+    dslam::Publisher publisher("dude", "ipc:///tmp/pubsub.ipc");
     ecl::MilliSleep()(200); // let the connection establish itself
     while(true) {
       std::cout << "Publishing 'dude'" << std::endl;
-      publisher.publish(std::string("dude"));
+      publisher.publish(1, std::string("dude"));
       ecl::MilliSleep()(500);
     }
   } else if (argc > 1 && std::string(argv[1]) == "sub") {

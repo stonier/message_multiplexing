@@ -30,7 +30,6 @@ namespace dslam {
 ** Interfaces
 *****************************************************************************/
 
-template <typename T>
 class Publisher {
 public:
   Publisher(const std::string &name, const std::string &url = "") :
@@ -44,7 +43,8 @@ public:
     }
   }
 
-  void publish(const T& msg) {
+  template<typename T>
+  void publish(const unsigned int& id, const T& msg) {
     std::cout << "Socket: " << socket << std::endl;
     if ( socket >= 0 ) {
       std::vector<char> buffer = Message<T>::encode(msg);
@@ -61,12 +61,12 @@ private:
   int socket;
 };
 
-template <typename T>
 class PseudoPublisher {
 public:
   PseudoPublisher(const std::string &name, const std::string &url = "") {}
 
-  void publish(const T& msg) {}
+  template<typename T>
+  void publish(const unsigned int& id, const T& msg) {}
 };
 
 } // dslam
