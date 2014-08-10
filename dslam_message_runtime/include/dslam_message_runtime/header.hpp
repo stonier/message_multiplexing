@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/include/dslam_message_runtime/message.hpp
+ * @file /dslam_message_runtime/include/dslam_message_runtime/impl/header.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,15 +7,12 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef dslam_message_runtime_MESSAGE_HPP_
-#define dslam_message_runtime_MESSAGE_HPP_
+#ifndef dslam_message_runtime_HEADER_HPP_
+#define dslam_message_runtime_HEADER_HPP_
 
 /*****************************************************************************
 ** Includes
 *****************************************************************************/
-
-#include <iostream>
-#include <vector>
 
 /*****************************************************************************
 ** Namespaces
@@ -23,24 +20,22 @@
 
 namespace dslam {
 
-typedef std::vector<unsigned char> ByteArray;
-
 /*****************************************************************************
 ** Interfaces
 *****************************************************************************/
 
-template <typename T>
-struct Message {
-  static void encode(const T& msg, ByteArray& buffer) {
-    std::cout << "Psuedo-Encoding"<< std::endl;
-  }
+struct PacketHeader {
+  static const unsigned int size;
+  PacketHeader(const unsigned int& id, const unsigned int& length);
 
-  static T decode(const unsigned char* buffer, const unsigned int& size) {
-    std::cout << "Pseudo-Decoding" << std::endl;
-    return T();
-  }
+  unsigned int const& signature() const { return header0; }
+  unsigned int const& id()        const { return header1; }
+  unsigned int const& reserved()  const { return header2; }
+  unsigned int const& length()    const { return header3; }
+
+  unsigned int header0, header1, header2, header3;
 };
 
-} // dslam
+} // namespace dslam
 
-#endif /* dslam_message_runtime_MESSAGE_HPP_ */
+#endif /* dslam_message_runtime_HEADER_HPP_ */

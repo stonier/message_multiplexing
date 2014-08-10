@@ -37,11 +37,11 @@ public:
   template<typename C>
   void registerSubscriber(
       const unsigned int& id,
-      void (C::*processPacket)(const char*),
+      void (C::*processPacket)(const unsigned char*, const unsigned int&),
       C &s) {
     SubscriberMapResultPair ret;
     mutex.lock();
-    BufferCallbackFunction function = new ecl::PartiallyBoundUnaryMemberFunction<C,const char*,void>(processPacket,s);
+    BufferCallbackFunction function = new ecl::PartiallyBoundBinaryMemberFunction<C,const unsigned char*,const unsigned int&, void>(processPacket,s);
     ret = subscribers.insert(SubscriberMapPair(id, function));
     mutex.unlock();
     if ( !ret.second )  {
@@ -52,7 +52,8 @@ public:
   void unregisterSubscriber(const unsigned int& id);
 
 private:
-  typedef ecl::UnaryFunction<const char*,void>* BufferCallbackFunction;
+//  typedef ecl::UnaryFunction<const unsigned char*,void>* BufferCallbackFunction;
+  typedef ecl::BinaryFunction<const unsigned char*,const unsigned int&,void>* BufferCallbackFunction;
   typedef std::map<unsigned int, BufferCallbackFunction> SubscriberMap;
   typedef std::map<unsigned int, BufferCallbackFunction>::iterator SubscriberMapIterator;
   typedef std::map<unsigned int, BufferCallbackFunction>::const_iterator SubscriberMapConstIterator;
@@ -100,7 +101,7 @@ public:
   /**
    * @brief Register a callback with the specified demux.
    *
-   * Basically we just need a function that can handle const char* buffers.
+   * Basically we just need a function that can handle const unsigned char* buffers.
    *
    * Could make this more specific and specify 'template<typename DataType>' with
    * 'Subscriber<DataType>' instead of 'C', but this keeps it open for creating new
@@ -115,7 +116,7 @@ public:
   static void registerSubscriber(
       const std::string& name,
       const unsigned int& id,
-      void (C::*processPacket)(const char*),
+      void (C::*processPacket)(const unsigned char*, const unsigned int&),
       C &s)
   {
     DemuxMapIterator iter = demultiplexers().find(name);

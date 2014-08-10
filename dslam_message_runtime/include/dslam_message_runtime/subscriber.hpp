@@ -17,6 +17,8 @@
 #include <ecl/utilities/function_objects.hpp>
 #include <string>
 #include "demux.hpp"
+#include "core_messages.hpp"
+#include "header.hpp"
 #include "message.hpp"
 
 /*****************************************************************************
@@ -65,7 +67,6 @@ public:
     id(ID),
     function(new ecl::PartiallyBoundUnaryMemberFunction<C,const DataType&,void>(f,c))
   {
-    std::cout << "Set up partially bound member function foo"<< std::endl;
     MessageDemux::registerSubscriber(name, id, &Subscriber<DataType, ID>::processPacket, (*this));
   }
   virtual ~Subscriber() {
@@ -73,10 +74,9 @@ public:
     delete function;
   }
 
-  void processPacket(const char* buffer) {
-    std::cout << "Processing Packet" << std::endl;
-    DataType data = dslam::Message<DataType>::decode(buffer);
-    std::cout << "Sending out: " << data << std::endl;
+  void processPacket(const unsigned char* buffer, const unsigned int& size) {
+    DataType data = dslam::Message<DataType>::decode(buffer, size);
+    std::cout << "Subscriber : relaying '" << data << "' to the user's callback" << std::endl;
     (*function)(data);
   }
 

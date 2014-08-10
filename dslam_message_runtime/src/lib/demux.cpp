@@ -11,6 +11,8 @@
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
 #include "../../include/dslam_message_runtime/demux.hpp"
+#include "../../include/dslam_message_runtime/header.hpp"
+#include "../../include/dslam_message_runtime/core_messages.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -69,19 +71,25 @@ void MessageDemux::spin() {
   std::cout << "Demux spinning..."<< std::endl;
   while (1)
   {
-    char *buf = NULL;
-    int bytes = nn_recv (socket, &buf, NN_MSG, 0);
+    unsigned char *buffer = NULL;
+    int bytes = nn_recv (socket, &buffer, NN_MSG, 0);
     // assert (bytes >= 0);
-    std::cout << "CLIENT " << name << ": RECEIVED " << buf << std::endl;
+    std::cout << "Demux : [" << bytes << "] ";
+    std::cout << std::hex;
+    for(unsigned int i=0; i < bytes; ++i ) {
+      std::cout << static_cast<unsigned int>(*(buffer+i)) << " ";
+    }
+    std::cout << std::dec;
+    std::cout << std::endl;
+    dslam::PacketHeader header = dslam::Message<dslam::PacketHeader>::decode(buffer, PacketHeader::size);
     mutex.lock();
-    std::cout << "spin::got data"<< std::endl;
-    SubscriberMapIterator iter = subscribers.find(1);
+    SubscriberMapIterator iter = subscribers.find(header.id());
     if (iter != subscribers.end()) {
-      std::cout << "spin::relay data"<< std::endl;
-      (*(iter->second))(buf);
+      std::cout << "Demux : relay data"<< std::endl;
+      (*(iter->second))(buffer + PacketHeader::size, bytes - PacketHeader::size);
     }
     mutex.unlock();
-    nn_freemsg (buf);
+    nn_freemsg (buffer);
   }
 }
 

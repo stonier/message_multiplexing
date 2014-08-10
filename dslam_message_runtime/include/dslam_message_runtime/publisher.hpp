@@ -17,8 +17,10 @@
 #include <iostream>
 #include <nanomsg/nn.h>
 #include <vector>
-#include "mux.hpp"
+#include "core_messages.hpp"
+#include "header.hpp"
 #include "message.hpp"
+#include "mux.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -47,11 +49,16 @@ public:
   void publish(const unsigned int& id, const T& msg) {
     std::cout << "Socket: " << socket << std::endl;
     if ( socket >= 0 ) {
-      std::vector<char> buffer = Message<T>::encode(msg);
+      ByteArray msg_buffer;
+      Message<T>::encode(msg, msg_buffer);
+      ByteArray buffer;
+      PacketHeader header(id, msg_buffer.size());
+      Message<PacketHeader>::encode(header, buffer);
+      buffer.insert(buffer.end(), msg_buffer.begin(), msg_buffer.end());
       std::cout << "Sending: " << buffer.size() << std::endl;
-      const char* data = "dude";
+//      const char* data = "dude";
       // int result = nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
-      int result = nn_send(socket, data, 4, 0); // last option is flags, only NN_DONTWAIT available
+      int result = nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
       std::cout << "Publishing result: " << result << std::endl;
       // lots of error flags to check here
     }

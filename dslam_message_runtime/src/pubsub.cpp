@@ -52,20 +52,8 @@ int main(int argc, char **argv)
     while(true) {
       ecl::MilliSleep()(200);
     }
-//    dslam::Subscriber subscriber("dude", "ipc:///tmp/pubsub.ipc");
-//    subscriber.spin();
-//  } else if (argc > 1 && std::string(argv[1]) == "pubsub") {
-//    std::cout << "Creating publisher" << std::endl;
-//    dslam::Publisher<std::string> publisher("dude");
-//    std::cout << "Creating subscriber"<< std::endl;
-//    dslam::Subscriber subscriber("dude");
-//    ecl::MilliSleep()(200); // let the connection establish itself
-//    std::cout << "Publishing" << std::endl;
-//    publisher.publish(std::string("dude"));
-//    std::cout << "Receiving" << std::endl;
-//    subscriber.spinOnce();
   } else {
-    std::cout << "Usage: pubsub pub||sub||pubsub" << std::endl;
+    std::cout << "Usage: pubsub pub||sub" << std::endl;
   }
   return 0;
 }

@@ -23,7 +23,8 @@ the extra creation of ports does get somewhat costly.
 
 Must dos:
 
-* too many to list 
+* switch to ecl byte array converters in `impl/builders.hpp`
+* convert the builders to specific Message class types with encode/decode functionality
 
 Maybe dos:
 
