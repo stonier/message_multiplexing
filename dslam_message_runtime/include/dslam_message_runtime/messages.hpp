@@ -27,6 +27,8 @@ namespace dslam {
 //typedef ecl::Array<unsigned char> ByteArray;
 typedef std::vector<unsigned char> ByteArray;
 typedef ecl::Stencil<ByteArray> ByteStencil;
+typedef ecl::Stencil<unsigned char*> RawByteStencil;
+typedef ecl::Stencil<const unsigned char*> ConstRawByteStencil;
 
 /*****************************************************************************
 ** Interfaces

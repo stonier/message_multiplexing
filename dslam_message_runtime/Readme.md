@@ -19,12 +19,17 @@ the extra creation of ports does get somewhat costly.
 * Publisher : can publish any/all packet types
 * Subscriber : single packet type receiver which will convert a received buffer and relay to a user callback
 
-### Todo
+### Roadmap
 
-Must dos:
+Todos:
 
+* mux should create muxes on the fly like demux
+ * publisher to send a buffer to the mux which relays across the wire 
 * switch to ecl byte array converters in `impl/builders.hpp`
 * convert the builders to specific Message class types with encode/decode functionality
+* transports - mux and demux should separate the actual underlying transport (nanomsg/serial...)
+* handle use case in which packets are gathered and sent (i.e. kobuki style, not dslam style)
+* loadable { packet_id : data_type } registries for pubs and subs to check against
 
 Maybe dos:
 

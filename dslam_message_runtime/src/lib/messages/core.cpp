@@ -8,6 +8,7 @@
 *****************************************************************************/
 
 #include "../../../include/dslam_message_runtime/messages/core.hpp"
+#include <ecl/containers/stencil.hpp>
 
 /*****************************************************************************
 ** Namespaces
@@ -24,19 +25,22 @@ void Message<PacketHeader>::encode(const PacketHeader& header, ByteArray& buffer
   buffer.resize(PacketHeader::size);
 
   ecl::Converter<ByteStencil, unsigned int> to_byte_array;
-  unsigned int size = sizeof(header.signature());
-  ByteStencil stencil(buffer, buffer.begin(), buffer.begin() + size); to_byte_array(stencil, header.signature());
-  stencil = ByteStencil(buffer, buffer.begin() +   size, buffer.begin() + 2*size); to_byte_array(stencil, header.id());
-  stencil = ByteStencil(buffer, buffer.begin() + 2*size, buffer.begin() + 3*size); to_byte_array(stencil, header.reserved());
-  stencil = ByteStencil(buffer, buffer.begin() + 3*size, buffer.begin() + 4*size); to_byte_array(stencil, header.length());
+  unsigned int window_size = sizeof(header.signature());
+  ByteStencil stencil(buffer, buffer.begin(), buffer.begin() + window_size); to_byte_array(stencil, header.signature());
+  stencil.resettle(window_size, window_size);   to_byte_array(stencil, header.id());
+  stencil.resettle(2*window_size, window_size); to_byte_array(stencil, header.reserved());
+  stencil.resettle(3*window_size, window_size); to_byte_array(stencil, header.length());
 }
 
 PacketHeader Message<PacketHeader>::decode(const unsigned char* buffer, const unsigned int& size) {
+  // TODO : check PacketHeader::size == size, throw exception
   unsigned int signature, id, reserved, length;
-  to_be_deprecated::buildVariable(signature, buffer);
-  to_be_deprecated::buildVariable(id, buffer+4);
-  to_be_deprecated::buildVariable(reserved, buffer+8);
-  to_be_deprecated::buildVariable(length, buffer+12);
+  ecl::Converter<unsigned int, ConstRawByteStencil> from_byte_array;
+  unsigned int window_size = sizeof(signature);
+  ConstRawByteStencil stencil(buffer, size, buffer, buffer+window_size); signature = from_byte_array(stencil);
+  stencil.resettle(  window_size, window_size); id = from_byte_array(stencil);
+  stencil.resettle(2*window_size, window_size); reserved = from_byte_array(stencil);
+  stencil.resettle(3*window_size, window_size); length = from_byte_array(stencil);
   return PacketHeader(id, length);
 }
 
