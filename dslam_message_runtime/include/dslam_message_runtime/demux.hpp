@@ -17,6 +17,7 @@
 #include <ecl/utilities/function_objects.hpp>
 #include <ecl/threads/mutex.hpp>
 #include <map>
+#include <memory>
 #include <string>
 #include <thread>
 
@@ -26,6 +27,10 @@
 
 namespace dslam {
 namespace impl {
+
+/*****************************************************************************
+ ** Interfaces
+ *****************************************************************************/
 
 class MessageDemux {
 public:

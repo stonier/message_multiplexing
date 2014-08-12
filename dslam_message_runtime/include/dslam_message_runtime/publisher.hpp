@@ -15,11 +15,8 @@
 *****************************************************************************/
 
 #include <iostream>
-#include <nanomsg/nn.h>
+#include <string>
 #include <vector>
-#include "header.hpp"
-#include "messages.hpp"
-#include "messages/core.hpp"
 #include "mux.hpp"
 
 /*****************************************************************************
@@ -35,37 +32,25 @@ namespace dslam {
 class Publisher {
 public:
   Publisher(const std::string &name, const std::string &url = "") :
-    socket(MessageMux::createPublisher(name, url))
+    name(name)
   {
-    std::cout << "Created socket" << std::endl;
+    if (!url.empty()) {
+      MessageMux::registerMux(name, url);
+    }
+    // else might want to check name is actually up
   }
   ~Publisher() {
-    if ( socket > 0 ) {
-      nn_shutdown (socket, 0);
-    }
   }
 
   template<typename T>
   void publish(const unsigned int& id, const T& msg) {
-    std::cout << "Socket: " << socket << std::endl;
-    if ( socket >= 0 ) {
-      ByteArray msg_buffer;
-      Message<T>::encode(msg, msg_buffer);
-      ByteArray buffer;
-      PacketHeader header(id, msg_buffer.size());
-      Message<PacketHeader>::encode(header, buffer);
-      buffer.insert(buffer.end(), msg_buffer.begin(), msg_buffer.end());
-      std::cout << "Sending: " << buffer.size() << std::endl;
-//      const char* data = "dude";
-      // int result = nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
-      int result = nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
-      std::cout << "Publishing result: " << result << std::endl;
-      // lots of error flags to check here
-    }
+    ByteArray msg_buffer;
+    Message<T>::encode(msg, msg_buffer);
+    int result = MessageMux::send(name, id, msg_buffer);
   }
 
 private:
-  int socket;
+  std::string name;
 };
 
 class PseudoPublisher {
