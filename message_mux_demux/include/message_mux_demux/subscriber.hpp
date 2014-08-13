@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/include/dslam_message_runtime/subscriber.hpp
+ * @file /message_mux_demux/include/message_mux_demux/subscriber.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,8 +7,8 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef dslam_message_runtime_SUBSCRIBER_HPP_
-#define dslam_message_runtime_SUBSCRIBER_HPP_
+#ifndef message_mux_demux_SUBSCRIBER_HPP_
+#define message_mux_demux_SUBSCRIBER_HPP_
 
 /*****************************************************************************
 ** Includes
@@ -25,7 +25,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 
 /*****************************************************************************
 ** Interfaces
@@ -75,7 +75,7 @@ public:
   }
 
   void processPacket(const unsigned char* buffer, const unsigned int& size) {
-    DataType data = dslam::Message<DataType>::decode(buffer, size);
+    DataType data = message_multiplexing::Message<DataType>::decode(buffer, size);
     std::cout << "Subscriber : relaying '" << data << "' to the user's callback" << std::endl;
     (*function)(data);
   }
@@ -86,6 +86,6 @@ private:
   ecl::UnaryFunction<const DataType&,void> *function;
 };
 
-} // dslam
+} // namespace message_multiplexing
 
-#endif /* dslam_message_runtime_SUBSCRIBER_HPP_ */
+#endif /* message_mux_demux_SUBSCRIBER_HPP_ */

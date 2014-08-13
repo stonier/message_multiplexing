@@ -1,4 +1,4 @@
-dslam_messaging
-===============
+message_multiplexing
+====================
 
-Lightweight embedded messaging system built on nanomsg
+Lightweight embedded messaging system.

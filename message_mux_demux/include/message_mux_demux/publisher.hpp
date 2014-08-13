@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/include/dslam_message_runtime/publisher.hpp
+ * @file /message_mux_demux/include/message_mux_demux/publisher.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,8 +7,8 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef dslam_message_runtime_PUBLISHER_HPP_
-#define dslam_message_runtime_PUBLISHER_HPP_
+#ifndef message_mux_demux_PUBLISHER_HPP_
+#define message_mux_demux_PUBLISHER_HPP_
 
 /*****************************************************************************
 ** Includes
@@ -23,7 +23,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 
 /*****************************************************************************
 ** Interfaces
@@ -61,6 +61,6 @@ public:
   void publish(const unsigned int& id, const T& msg) {}
 };
 
-} // dslam
+} // namespace message_multiplexing
 
-#endif /* dslam_message_runtime_PUBLISHER_HPP_ */
+#endif /* message_mux_demux_PUBLISHER_HPP_ */

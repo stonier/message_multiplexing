@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/include/dslam_message_runtime/impl/header.hpp
+ * @file /message_mux_demux/include/message_mux_demux/impl/header.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,18 +7,20 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef dslam_message_runtime_HEADER_HPP_
-#define dslam_message_runtime_HEADER_HPP_
+#ifndef message_mux_demux_HEADER_HPP_
+#define message_mux_demux_HEADER_HPP_
 
 /*****************************************************************************
 ** Includes
 *****************************************************************************/
 
+#include <vector>
+
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 
 /*****************************************************************************
 ** Interfaces
@@ -26,16 +28,17 @@ namespace dslam {
 
 struct PacketHeader {
   static const unsigned int size;
-  PacketHeader(const unsigned int& id, const unsigned int& length);
-
-  unsigned int const& signature() const { return header0; }
-  unsigned int const& id()        const { return header1; }
-  unsigned int const& reserved()  const { return header2; }
-  unsigned int const& length()    const { return header3; }
-
-  unsigned int header0, header1, header2, header3;
+  PacketHeader(const unsigned int& signature=0xaa55aa55) : signature(signature) {}
+  unsigned int signature;
 };
 
-} // namespace dslam
+struct SubPacketHeader {
+  static const unsigned int size;
+  SubPacketHeader(const unsigned int& id, const unsigned int& length);
+  unsigned int id;
+  unsigned int length;
+};
 
-#endif /* dslam_message_runtime_HEADER_HPP_ */
+} // message_multiplexing
+
+#endif /* message_mux_demux_HEADER_HPP_ */

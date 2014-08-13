@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/include/dslam_message_runtime/messages.hpp
+ * @file /message_mux_demux/include/message_mux_demux/messages.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,8 +7,8 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef dslam_message_runtime_MESSAGES_HPP_
-#define dslam_message_runtime_MESSAGES_HPP_
+#ifndef message_mux_demux_MESSAGES_HPP_
+#define message_mux_demux_MESSAGES_HPP_
 
 /*****************************************************************************
 ** Includes
@@ -22,7 +22,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 
 //typedef ecl::Array<unsigned char> ByteArray;
 typedef std::vector<unsigned char> ByteArray;
@@ -46,6 +46,6 @@ struct Message {
   }
 };
 
-} // dslam
+} // namespace message_multiplexing
 
-#endif /* dslam_message_runtime_MESSAGES_HPP_ */
+#endif /* message_mux_demux_MESSAGES_HPP_ */

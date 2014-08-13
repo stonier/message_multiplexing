@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/src/lib/demux.cpp
+ * @file /message_mux_demux/src/lib/demux.cpp
  * 
  * @brief Short description of this file.
  **/
@@ -10,20 +10,16 @@
 #include <iostream>
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
-#include "../../include/dslam_message_runtime/demux.hpp"
-#include "../../include/dslam_message_runtime/header.hpp"
-#include "../../include/dslam_message_runtime/messages/core.hpp"
+#include "../../include/message_mux_demux/demux.hpp"
+#include "../../include/message_mux_demux/header.hpp"
+#include "../../include/message_mux_demux/messages/core.hpp"
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 namespace impl {
-
-// scope - only visible in this source file
-//typedef dslam::MessageDemux Demux;
-//typedef dslam::MessageDemux::DemuxMapConstIterator DemuxMapConstIterator;
 
 /*****************************************************************************
 ** Implementation
@@ -81,12 +77,13 @@ void MessageDemux::spin() {
     }
     std::cout << std::dec;
     std::cout << std::endl;
-    dslam::PacketHeader header = dslam::Message<dslam::PacketHeader>::decode(buffer, PacketHeader::size);
+    message_multiplexing::PacketHeader header = message_multiplexing::Message<message_multiplexing::PacketHeader>::decode(buffer, PacketHeader::size);
+    message_multiplexing::SubPacketHeader subheader = message_multiplexing::Message<message_multiplexing::SubPacketHeader>::decode(buffer + PacketHeader::size, SubPacketHeader::size);
     mutex.lock();
-    SubscriberMapIterator iter = subscribers.find(header.id());
+    SubscriberMapIterator iter = subscribers.find(subheader.id);
     if (iter != subscribers.end()) {
       std::cout << "Demux : relay data"<< std::endl;
-      (*(iter->second))(buffer + PacketHeader::size, bytes - PacketHeader::size);
+      (*(iter->second))(buffer + PacketHeader::size + SubPacketHeader::size, bytes - PacketHeader::size - SubPacketHeader::size);
     }
     mutex.unlock();
     nn_freemsg (buffer);
@@ -101,13 +98,13 @@ void MessageDemux::unregisterSubscriber(const unsigned int& id)
 }
 
 } // namespace impl
-} // namespace dslam
+} // message_multiplexing
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 
 /*****************************************************************************
 ** Globals
@@ -146,4 +143,4 @@ void MessageDemux::unregisterSubscriber(const std::string& name, const unsigned 
 
 
 
-} // namespace dslam
+} // message_multiplexing

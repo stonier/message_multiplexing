@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/src/pubsub.cpp
+ * @file /message_mux_demux/src/pubsub.cpp
  * 
  * @brief Short description of this file.
  **/
@@ -9,9 +9,9 @@
 
 #include <ecl/time.hpp>
 #include <string>
-#include "../include/dslam_message_runtime/publisher.hpp"
-#include "../include/dslam_message_runtime/demux.hpp"
-#include "../include/dslam_message_runtime/subscriber.hpp"
+#include "../include/message_mux_demux/publisher.hpp"
+#include "../include/message_mux_demux/demux.hpp"
+#include "../include/message_mux_demux/subscriber.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -36,9 +36,9 @@ void foo(const std::string& data) {
 int main(int argc, char **argv)
 {
   if (argc > 1 && std::string(argv[1]) == "pub") {
-    dslam::MessageMux::registerMux("dude", "ipc:///tmp/pubsub.ipc");
+    message_multiplexing::MessageMux::registerMux("dude", "ipc:///tmp/pubsub.ipc");
     std::cout << "Creating publisher" << std::endl;
-    dslam::Publisher publisher("dude", "ipc:///tmp/pubsub.ipc");
+    message_multiplexing::Publisher publisher("dude", "ipc:///tmp/pubsub.ipc");
     ecl::MilliSleep()(200); // let the connection establish itself
     while(true) {
       std::cout << "Publishing 'dude'" << std::endl;
@@ -46,9 +46,9 @@ int main(int argc, char **argv)
       ecl::MilliSleep()(500);
     }
   } else if (argc > 1 && std::string(argv[1]) == "sub") {
-    dslam::MessageDemux::registerDemux("dude", "ipc:///tmp/pubsub.ipc");
+    message_multiplexing::MessageDemux::registerDemux("dude", "ipc:///tmp/pubsub.ipc");
     std::cout << "Creating demux"<< std::endl;
-    dslam::Subscriber<std::string, 1> subscriber("dude", foo);
+    message_multiplexing::Subscriber<std::string, 1> subscriber("dude", foo);
     while(true) {
       ecl::MilliSleep()(200);
     }

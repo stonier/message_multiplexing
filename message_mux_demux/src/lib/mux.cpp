@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/src/lib/mux.cpp
+ * @file /message_mux_demux/src/lib/mux.cpp
  * 
  * @brief Short description of this file.
  **/
@@ -10,16 +10,16 @@
 #include <iostream>
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
-#include "../../include/dslam_message_runtime/mux.hpp"
-#include "../../include/dslam_message_runtime/header.hpp"
-#include "../../include/dslam_message_runtime/messages.hpp"
-#include "../../include/dslam_message_runtime/messages/core.hpp"
+#include "../../include/message_mux_demux/mux.hpp"
+#include "../../include/message_mux_demux/header.hpp"
+#include "../../include/message_mux_demux/messages.hpp"
+#include "../../include/message_mux_demux/messages/core.hpp"
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 namespace impl {
 
 /*****************************************************************************
@@ -47,30 +47,33 @@ MessageMux::~MessageMux() {
 
 int MessageMux::send(const unsigned int& id, const ByteArray& msg_buffer) {
     ByteArray buffer;
-    unsigned int length = msg_buffer.size();
-    std::cout << "Msg Buffer length: " << length<< std::endl;
-    PacketHeader header(id, length);
-    Message<PacketHeader>::encode(header, buffer);
+    Message<PacketHeader>::encode(PacketHeader(), buffer);
+    Message<SubPacketHeader>::encode(SubPacketHeader(id, msg_buffer.size()), buffer);
     buffer.insert(buffer.end(), msg_buffer.begin(), msg_buffer.end());
-    std::cout << "Sending: " << buffer.size() << std::endl;
-    // const char* data = "dude";
-    // int result = nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
+
+    std::cout << "Mux : [" << id << "][" << buffer.size() << "] ";
+    std::cout << std::hex;
+    for(unsigned int i=0; i < buffer.size(); ++i ) {
+      std::cout << static_cast<unsigned int>(buffer[i]) << " ";
+    }
+    std::cout << std::dec;
+    std::cout << std::endl;
+
     int result = nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
     std::cout << "Publishing result: " << result << std::endl;
-
     // lots of error flags to check here
     return 0;
 }
 
 } // namespace impl
-} // namespace dslam
+} // message_multiplexing
 
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 
 /*****************************************************************************
 ** Global Statics
@@ -153,4 +156,4 @@ int MessageMux::send(const std::string& name, const unsigned int& id, const Byte
 //  }
 //}
 
-} // dslam
+} // namespace message_multiplexing

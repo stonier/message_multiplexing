@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>dslam_message_runtime</name>
+	<name>message_mux_demux</name>
 	<comment></comment>
 	<projects>
 	</projects>

@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/src/sample.cpp
+ * @file /message_mux_demux/src/sample.cpp
  * 
  * @brief Short description of this file.
  **/

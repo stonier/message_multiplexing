@@ -1,13 +1,14 @@
 <package>
-  <name>dslam_message_runtime</name>
+  <name>message_mux_demux</name>
   <version>0.1.0</version>
   <description>
-   Runtime mechanisms for dslam messaging.
+   Multiplexing many packet types across a single connection. Great for embedded connections
+   by serial or ethernet types.
   </description>
-  <url type="repository">https://bitbucket.org/yujinrobot/dslam_messages</url>
-  <url type="bugtracker">https://bitbucket.org/yujinrobot/dslam_messages/issues</url>
+  <url type="repository">https://github.com/stonier/message_multiplexing</url>
+  <url type="bugtracker">https://github.com/stonier/message_multiplexing/issues</url>
   <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
-  <license>Yujin Robot</license>
+  <license>BSD</license>
   <author>Daniel Stonier</author>
 
   <buildtool_depend>catkin</buildtool_depend>

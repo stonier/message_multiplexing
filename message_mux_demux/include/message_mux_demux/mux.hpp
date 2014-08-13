@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/include/dslam_message_runtime/mux.hpp
+ * @file /message_mux_demux/include/message_mux_demux/mux.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,8 +7,8 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef dslam_message_runtime_MUX_HPP_
-#define dslam_message_runtime_MUX_HPP_
+#ifndef message_mux_demux_MUX_HPP_
+#define message_mux_demux_MUX_HPP_
 
 /*****************************************************************************
 ** Includes
@@ -23,7 +23,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 namespace impl {
 
 /*****************************************************************************
@@ -42,13 +42,13 @@ private:
 };
 
 } // namespace impl
-} // namespace dslam
+} // message_multiplexing
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 
 /*****************************************************************************
 ** Interfaces
@@ -71,6 +71,6 @@ public:
 //  static int createPublisher(const std::string& name, const std::string& url = "");
 };
 
-} // dslam
+} // namespace message_multiplexing
 
-#endif /* dslam_message_runtime_MUX_HPP_ */
+#endif /* message_mux_demux_MUX_HPP_ */

@@ -8,7 +8,7 @@ the extra creation of ports does get somewhat costly.
 ### Overview
 
 * Use a packet id (unsigned int) for each type of publication.
-* Decoupled marshalling code in dslam::Message<T> classes.
+* Decoupled marshalling code in message_multiplexing::Message<T> classes.
 * Mux and demux registered with a name/url pair. Pubs and subs connect by name.
 * Publishers can publish from anywhere.
 * Only one subscriber per packet id
@@ -23,13 +23,15 @@ the extra creation of ports does get somewhat costly.
 
 Todos:
 
-* mux should create muxes on the fly like demux
- * publisher to encode, then send a buffer to the mux which relays across the wire 
-* convert the builders to specific Message class types with encode/decode functionality
 * transports - mux and demux should separate the actual underlying transport (nanomsg/serial...)
-* handle use case in which packets are gathered and sent (i.e. kobuki style, not dslam style)
+* handle use case in which packets are gathered and sent (e.g. kobuki style)
+ * ~~split packet signature from packet id/payload length~~
+ * optional flag when sending that belays the send.
 * loadable { packet_id : data_type } registries for pubs and subs to check against
 * ~~switch to ecl byte array converters in `impl/builders.hpp`~~
+* ~~mux should create muxes on the fly like demux~~
+ * ~~publisher to encode, then send a buffer to the mux which relays across the wire ~~
+* ~~convert the builders to specific Message class types with encode/decode functionality~~
 
 Maybe dos:
 

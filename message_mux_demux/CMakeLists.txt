@@ -3,7 +3,7 @@
 ##############################################################################
 
 cmake_minimum_required(VERSION 2.8.3)
-project(dslam_message_runtime)
+project(message_mux_demux)
 
 ##############################################################################
 # Find Packages
@@ -54,7 +54,7 @@ add_subdirectory(src)
 
 #install(
 #    PROGRAMS 
-#        scripts/dslam_image_capture
+#        scripts/foo
 #    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 #    )
 

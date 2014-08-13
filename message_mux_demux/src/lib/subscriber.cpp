@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/src/lib/subscriber.cpp
+ * @file /message_mux_demux/src/lib/subscriber.cpp
  * 
  * @brief Short description of this file.
  **/
@@ -10,17 +10,17 @@
 #include <iostream>
 #include <nanomsg/nn.h>
 #include <string>
-#include "../../include/dslam_message_runtime/mux.hpp"
-#include "../../include/dslam_message_runtime/subscriber.hpp"
+#include "../../include/message_mux_demux/mux.hpp"
+#include "../../include/message_mux_demux/subscriber.hpp"
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 
 /*****************************************************************************
 ** Globals
 *****************************************************************************/
 
-} // dslam
+} // namespace message_multiplexing

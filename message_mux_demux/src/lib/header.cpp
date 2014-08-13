@@ -1,5 +1,5 @@
 /**
- * @file /dslam_message_runtime/src/lib/header.cpp
+ * @file /message_mux_demux/src/lib/header.cpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,25 +7,25 @@
 ** Includes
 *****************************************************************************/
 
-#include "../../include/dslam_message_runtime/header.hpp"
+#include <vector>
+#include "../../include/message_mux_demux/header.hpp"
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace dslam {
+namespace message_multiplexing {
 
 /*****************************************************************************
-** Statics
+** Implementation
 *****************************************************************************/
 
-const unsigned int PacketHeader::size = 16;
+const unsigned int PacketHeader::size = sizeof(unsigned int);
+const unsigned int SubPacketHeader::size = 2*sizeof(unsigned int);
 
-PacketHeader::PacketHeader(const unsigned int& id, const unsigned int& length)
-  : header0(0xaa55aa55) // signature
-  , header1(id)         // id
-  , header2(0xffffffff) // reserved1
-  , header3(length)     // length
+SubPacketHeader::SubPacketHeader(const unsigned int& id, const unsigned int& length)
+  : id(id)
+  , length(length)
 {}
 
-} // dslam
+} // namespace message_multiplexing
