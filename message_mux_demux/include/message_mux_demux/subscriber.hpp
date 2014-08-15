@@ -25,7 +25,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Interfaces
@@ -75,7 +75,7 @@ public:
   }
 
   void processPacket(const unsigned char* buffer, const unsigned int& size) {
-    DataType data = message_multiplexing::Message<DataType>::decode(buffer, size);
+    DataType data = message_mux_demux::Message<DataType>::decode(buffer, size);
     std::cout << "Subscriber : relaying '" << data << "' to the user's callback" << std::endl;
     (*function)(data);
   }
@@ -86,6 +86,6 @@ private:
   ecl::UnaryFunction<const DataType&,void> *function;
 };
 
-} // namespace message_multiplexing
+} // namespace message_mux_demux
 
 #endif /* message_mux_demux_SUBSCRIBER_HPP_ */

@@ -22,7 +22,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 //typedef ecl::Array<unsigned char> ByteArray;
 typedef std::vector<unsigned char> ByteArray;
@@ -46,6 +46,6 @@ struct Message {
   }
 };
 
-} // namespace message_multiplexing
+} // namespace message_mux_demux
 
 #endif /* message_mux_demux_MESSAGES_HPP_ */

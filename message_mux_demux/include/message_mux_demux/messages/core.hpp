@@ -22,7 +22,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Header
@@ -52,6 +52,6 @@ struct Message<std::string> {
   static std::string decode(const unsigned char* buffer, const unsigned int& size);
 };
 
-} // namespace message_multiplexing
+} // namespace message_mux_demux
 
 #endif /* message_mux_demux_CORE_MESSAGES_HPP_ */

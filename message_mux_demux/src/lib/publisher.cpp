@@ -1,5 +1,5 @@
 /**
- * @file /message_mux_demux/src/lib/header.cpp
+ * @file /message_mux_demux/src/lib/publisher.cpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,8 +7,7 @@
 ** Includes
 *****************************************************************************/
 
-#include <vector>
-#include "../../include/message_mux_demux/header.hpp"
+#include "../../include/message_mux_demux/publisher.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -20,12 +19,13 @@ namespace message_mux_demux {
 ** Implementation
 *****************************************************************************/
 
-const unsigned int PacketHeader::size = sizeof(unsigned int);
-const unsigned int SubPacketHeader::size = 2*sizeof(unsigned int);
-
-SubPacketHeader::SubPacketHeader(const unsigned int& id, const unsigned int& length)
-  : id(id)
-  , length(length)
-{}
+Publisher::Publisher(const std::string &name, const std::string &url) :
+  name(name)
+{
+  if (!url.empty()) {
+    MessageMux::registerMux(name, url);
+  }
+  // else might want to check name is actually up
+}
 
 } // namespace message_mux_demux

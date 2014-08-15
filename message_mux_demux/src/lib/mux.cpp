@@ -19,7 +19,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 namespace impl {
 
 /*****************************************************************************
@@ -66,14 +66,14 @@ int MessageMux::send(const unsigned int& id, const ByteArray& msg_buffer) {
 }
 
 } // namespace impl
-} // message_multiplexing
+} // message_mux_demux
 
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Global Statics
@@ -156,4 +156,4 @@ int MessageMux::send(const std::string& name, const unsigned int& id, const Byte
 //  }
 //}
 
-} // namespace message_multiplexing
+} // namespace message_mux_demux

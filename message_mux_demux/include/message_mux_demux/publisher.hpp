@@ -23,7 +23,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Interfaces
@@ -31,16 +31,8 @@ namespace message_multiplexing {
 
 class Publisher {
 public:
-  Publisher(const std::string &name, const std::string &url = "") :
-    name(name)
-  {
-    if (!url.empty()) {
-      MessageMux::registerMux(name, url);
-    }
-    // else might want to check name is actually up
-  }
-  ~Publisher() {
-  }
+  Publisher(const std::string &name, const std::string &url = "");
+  virtual ~Publisher() {}
 
   template<typename T>
   void publish(const unsigned int& id, const T& msg) {
@@ -61,6 +53,6 @@ public:
   void publish(const unsigned int& id, const T& msg) {}
 };
 
-} // namespace message_multiplexing
+} // namespace message_mux_demux
 
 #endif /* message_mux_demux_PUBLISHER_HPP_ */

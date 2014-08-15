@@ -18,7 +18,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 namespace impl {
 
 /*****************************************************************************
@@ -77,8 +77,8 @@ void MessageDemux::spin() {
     }
     std::cout << std::dec;
     std::cout << std::endl;
-    message_multiplexing::PacketHeader header = message_multiplexing::Message<message_multiplexing::PacketHeader>::decode(buffer, PacketHeader::size);
-    message_multiplexing::SubPacketHeader subheader = message_multiplexing::Message<message_multiplexing::SubPacketHeader>::decode(buffer + PacketHeader::size, SubPacketHeader::size);
+    message_mux_demux::PacketHeader header = message_mux_demux::Message<message_mux_demux::PacketHeader>::decode(buffer, PacketHeader::size);
+    message_mux_demux::SubPacketHeader subheader = message_mux_demux::Message<message_mux_demux::SubPacketHeader>::decode(buffer + PacketHeader::size, SubPacketHeader::size);
     mutex.lock();
     SubscriberMapIterator iter = subscribers.find(subheader.id);
     if (iter != subscribers.end()) {
@@ -98,13 +98,13 @@ void MessageDemux::unregisterSubscriber(const unsigned int& id)
 }
 
 } // namespace impl
-} // message_multiplexing
+} // message_mux_demux
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Globals
@@ -143,4 +143,4 @@ void MessageDemux::unregisterSubscriber(const std::string& name, const unsigned 
 
 
 
-} // message_multiplexing
+} // message_mux_demux

@@ -23,7 +23,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 namespace impl {
 
 /*****************************************************************************
@@ -42,13 +42,13 @@ private:
 };
 
 } // namespace impl
-} // message_multiplexing
+} // message_mux_demux
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Interfaces
@@ -71,6 +71,6 @@ public:
 //  static int createPublisher(const std::string& name, const std::string& url = "");
 };
 
-} // namespace message_multiplexing
+} // namespace message_mux_demux
 
 #endif /* message_mux_demux_MUX_HPP_ */

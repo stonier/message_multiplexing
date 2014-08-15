@@ -20,7 +20,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Interfaces
@@ -39,6 +39,6 @@ struct SubPacketHeader {
   unsigned int length;
 };
 
-} // message_multiplexing
+} // message_mux_demux
 
 #endif /* message_mux_demux_HEADER_HPP_ */

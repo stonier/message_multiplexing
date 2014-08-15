@@ -14,7 +14,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Implementation
@@ -67,4 +67,4 @@ std::string Message<std::string>::decode(const unsigned char* buffer, const unsi
   return std::string(buffer, buffer + size);  // c++0x buffer+size -> std::end(buffer)?
 }
 
-} // message_multiplexing
+} // message_mux_demux

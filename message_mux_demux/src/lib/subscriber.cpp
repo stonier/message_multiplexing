@@ -17,10 +17,10 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Globals
 *****************************************************************************/
 
-} // namespace message_multiplexing
+} // namespace message_mux_demux

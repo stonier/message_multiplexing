@@ -25,7 +25,7 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 namespace impl {
 
 /*****************************************************************************
@@ -73,13 +73,13 @@ private:
 };
 
 } // namespace impl
-} // message_multiplexing
+} // message_mux_demux
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace message_multiplexing {
+namespace message_mux_demux {
 
 /*****************************************************************************
 ** Interfaces
@@ -137,6 +137,6 @@ public:
 
 typedef MessageDemux MessageClient;
 
-} // namespace message_multiplexing
+} // namespace message_mux_demux
 
 #endif /* message_mux_demux_DEMUX_HPP_ */
