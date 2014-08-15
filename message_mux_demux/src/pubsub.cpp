@@ -52,8 +52,17 @@ int main(int argc, char **argv)
     while(true) {
       ecl::MilliSleep()(200);
     }
+  } else if (argc > 1 && std::string(argv[1]) == "pubsub") {
+    message_mux_demux::MessageMux::registerMux("dude", "ipc:///tmp/pubsub.ipc");
+    message_mux_demux::MessageDemux::registerDemux("dude", "ipc:///tmp/pubsub.ipc");
+    message_mux_demux::Subscriber<std::string, 1> subscriber("dude", foo);
+    message_mux_demux::Publisher publisher("dude", "ipc:///tmp/pubsub.ipc");
+    ecl::MilliSleep()(200); // let the connection establish itself
+    publisher.publish(1, std::string("dude"));
+    ecl::MilliSleep()(500);
+    message_mux_demux::MessageDemux::shutdown("dude");
   } else {
-    std::cout << "Usage: pubsub pub||sub" << std::endl;
+    std::cout << "Usage: pubsub pub||sub||pubsub" << std::endl;
   }
   return 0;
 }

@@ -15,11 +15,14 @@
 *****************************************************************************/
 
 #include <ecl/utilities/function_objects.hpp>
+#include <sstream>
 #include <string>
 #include "demux.hpp"
+#include "exceptions.hpp"
 #include "header.hpp"
 #include "messages.hpp"
 #include "messages/core.hpp"
+#include "registry.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -47,8 +50,16 @@ public:
     id(ID),
     function(new ecl::UnaryFreeFunction<const DataType&>(f))
   {
-    std::cout << "Set up unary function foo"<< std::endl;
-    (*function)(std::string("foo"));
+    if ( !MessageRegistry::isRegistered(ID) ) {
+      std::stringstream ss;
+      ss << "id '" << id << "' has not been registered";
+      throw UnregisteredID(ss.str());
+    }
+    if ( !MessageRegistry::isRegisteredWithType<DataType>(ID) ) {
+      std::stringstream ss;
+      ss << "id '" << id << "' is registered, but not with this type";
+      throw InvalidIDTypeCombination(ss.str());
+    }
     MessageDemux::registerSubscriber(name, id, &Subscriber<DataType, ID>::processPacket, (*this));
   }
   /**
@@ -76,7 +87,6 @@ public:
 
   void processPacket(const unsigned char* buffer, const unsigned int& size) {
     DataType data = message_mux_demux::Message<DataType>::decode(buffer, size);
-    std::cout << "Subscriber : relaying '" << data << "' to the user's callback" << std::endl;
     (*function)(data);
   }
 

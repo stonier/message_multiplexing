@@ -9,6 +9,7 @@
 
 #include "../../../include/message_mux_demux/messages/core.hpp"
 #include <ecl/containers/stencil.hpp>
+#include "../../../include/message_mux_demux/registry.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -68,3 +69,5 @@ std::string Message<std::string>::decode(const unsigned char* buffer, const unsi
 }
 
 } // message_mux_demux
+
+MESSAGE_MULTIPLEXING_REGISTER_PACKET_INFO(1, std::string, "Core official test message packet id for strings");

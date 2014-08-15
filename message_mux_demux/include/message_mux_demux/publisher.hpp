@@ -15,8 +15,11 @@
 *****************************************************************************/
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
+#include "exceptions.hpp"
+#include "registry.hpp"
 #include "mux.hpp"
 
 /*****************************************************************************
@@ -34,8 +37,26 @@ public:
   Publisher(const std::string &name, const std::string &url = "");
   virtual ~Publisher() {}
 
+  /**
+   * @brief Shunt a message off to be published.
+   * @param id
+   * @param msg
+   * @tparam T the data type for the message.
+   * @exception UnregisteredID : if this packet id hasn't been registered by the mux.
+   * @exception InvalidIDTypeCombination : if this packet id doesn't correspond to the template msg type.
+   */
   template<typename T>
   void publish(const unsigned int& id, const T& msg) {
+    if ( !MessageRegistry::isRegistered(id) ) {
+      std::stringstream ss;
+      ss << "id '" << id << "' has not been registered";
+      throw UnregisteredID(ss.str());
+    }
+    if ( !MessageRegistry::isRegisteredWithType<T>(id) ) {
+      std::stringstream ss;
+      ss << "id '" << id << "' is registered, but not with this type";
+      throw InvalidIDTypeCombination(ss.str());
+    }
     ByteArray msg_buffer;
     Message<T>::encode(msg, msg_buffer);
     int result = MessageMux::send(name, id, msg_buffer);

@@ -18,6 +18,7 @@ the extra creation of ports does get somewhat costly.
 * Message : basic serialiser/deserialiser for a particular message type
 * Publisher : can publish any/all packet types
 * Subscriber : single packet type receiver which will convert a received buffer and relay to a user callback
+* MessageRegistry : global enabler for managing the mux/demux's and their connection with pubs/subs.
 
 ### Roadmap
 
@@ -25,9 +26,9 @@ Todos:
 
 * transports - mux and demux should separate the actual underlying transport (nanomsg/serial...)
 * handle use case in which packets are gathered and sent (e.g. kobuki style)
- * ~~split packet signature from packet id/payload length~~
  * optional flag when sending that belays the send.
-* loadable { packet_id : data_type } registries for pubs and subs to check against
+ * ~~split packet signature from packet id/payload length~~
+* ~~loadable { packet_id : data_type } registries for pubs and subs to check against~~
 * ~~switch to ecl byte array converters in `impl/builders.hpp`~~
 * ~~mux should create muxes on the fly like demux~~
  * ~~publisher to encode, then send a buffer to the mux which relays across the wire ~~

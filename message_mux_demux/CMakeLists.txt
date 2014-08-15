@@ -47,6 +47,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 ##############################################################################
 
 add_subdirectory(src)
+add_subdirectory(tests)
 
 ##############################################################################
 # Installs

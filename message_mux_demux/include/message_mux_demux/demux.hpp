@@ -34,10 +34,11 @@ namespace impl {
 
 class MessageDemux {
 public:
-  MessageDemux(const std::string& name, const std::string& url);
+  MessageDemux(const std::string& name, const std::string& url, const bool verbose=false);
   MessageDemux(const MessageDemux& other);
   ~MessageDemux();
   void spin();
+  void shutdown();
 
   template<typename C>
   void registerSubscriber(
@@ -67,6 +68,9 @@ private:
 
   std::string name;
   int socket;
+  int endpoint_id; // used by nanomsg to id the endpoint connected to the socket (used in shutdown).
+  bool verbose;
+  bool shutdown_requested;
   std::thread thread;
   SubscriberMap subscribers;
   ecl::Mutex mutex;
@@ -92,8 +96,10 @@ public:
   typedef std::map<std::string, std::shared_ptr<impl::MessageDemux>>::iterator DemuxMapIterator;
   typedef std::map<std::string, std::shared_ptr<impl::MessageDemux>>::const_iterator DemuxMapConstIterator;
 
-  static void registerDemux(const std::string& name, const std::string& url);
+  static void registerDemux(const std::string& name, const std::string& url, const bool verbose=false);
   static void unregisterDemux(const std::string& name);
+  static void shutdown();  // shutdown all demux spin threads
+  static void shutdown(const std::string& name);  // shutdown only this demux spin thread
   /**
    * @brief Store demux's in an invisible storage location.
    *

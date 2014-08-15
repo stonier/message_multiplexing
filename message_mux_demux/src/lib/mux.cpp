@@ -26,17 +26,18 @@ namespace impl {
  ** Implementation
  *****************************************************************************/
 
-MessageMux::MessageMux(const std::string& name, const std::string& url) :
+MessageMux::MessageMux(const std::string& name,
+                       const std::string& url,
+                       const bool verbose) :
   name(name),
-  url(url)
+  url(url),
+  verbose(verbose)
 {
   socket = nn_socket (AF_SP, NN_PUB);
-  std::cout << "Socket: " << socket << std::endl;
   // TODO check >= 0, what does 0 mean?
   nn_setsockopt (socket, NN_SUB, NN_SOCKET_NAME, name.c_str(), name.size());
-  std::cout << "URL: " << url << std::endl;
   int unused_result = nn_bind(socket, url.c_str());
-  // TODO check the result, throw exceptions if necessary
+  // TODO : check the result, throw exceptions if necessary
 }
 
 MessageMux::~MessageMux() {
@@ -51,17 +52,17 @@ int MessageMux::send(const unsigned int& id, const ByteArray& msg_buffer) {
     Message<SubPacketHeader>::encode(SubPacketHeader(id, msg_buffer.size()), buffer);
     buffer.insert(buffer.end(), msg_buffer.begin(), msg_buffer.end());
 
-    std::cout << "Mux : [" << id << "][" << buffer.size() << "] ";
-    std::cout << std::hex;
-    for(unsigned int i=0; i < buffer.size(); ++i ) {
-      std::cout << static_cast<unsigned int>(buffer[i]) << " ";
+    if (verbose) {
+      std::cout << "Mux : [" << id << "][" << buffer.size() << "] ";
+      std::cout << std::hex;
+      for(unsigned int i=0; i < buffer.size(); ++i ) {
+        std::cout << static_cast<unsigned int>(buffer[i]) << " ";
+      }
+      std::cout << std::dec;
+      std::cout << std::endl;
     }
-    std::cout << std::dec;
-    std::cout << std::endl;
-
     int result = nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
-    std::cout << "Publishing result: " << result << std::endl;
-    // lots of error flags to check here
+    // TODO : lots of error flags to check here
     return 0;
 }
 
@@ -83,7 +84,7 @@ namespace message_mux_demux {
  * @param name
  * @param url
  */
-void MessageMux::registerMux(const std::string& name, const std::string& url) {
+void MessageMux::registerMux(const std::string& name, const std::string& url, const bool verbose) {
   MuxMapConstIterator iter = multiplexers().find(name);
   if ( iter == multiplexers().end() ) {
     if (url.empty()) {
@@ -91,7 +92,7 @@ void MessageMux::registerMux(const std::string& name, const std::string& url) {
     } else {
       std::pair<MuxMapIterator,bool> result;
       result = multiplexers().insert(
-          MuxMapPair(name, std::make_shared<impl::MessageMux>(name, url)));
+          MuxMapPair(name, std::make_shared<impl::MessageMux>(name, url, verbose)));
     }
   } else if ( !url.empty() ) {
     // TODO : throw an exception, name-url already present.
@@ -117,43 +118,5 @@ int MessageMux::send(const std::string& name, const unsigned int& id, const Byte
     return SpecifiedMuxNotAvailable;
   }
 }
-
-//void MessageMux::registerPublisher() {
-//
-//}
-///**
-// * @brief Create a publisher for a specified multiplexer.
-// *
-// * As a convenience, you can optionally initialise a multiplexer for the specified url
-// * at this name if it doesn't already exist. This saves from having to call
-// * `registerMux` in advance.
-// *
-// * Note, the guts of this is just creating a socket at the mutliplexer url
-// * which can do nanomsg style publishing.
-// *
-// * @param name
-// * @param url
-// * @return
-// */
-//void MessageMux::createPublisher(const std::string& name, const std::string& url) {
-//  std::cout << "Creating publisher" << std::endl;
-//  if ( !url.empty()) {
-//    registerMux(name, url);
-//  }
-//  MuxMapConstIterator iter = multiplexers().find(name);
-//  if ( iter != multiplexers().end() ) {
-//    int sock = nn_socket (AF_SP, NN_PUB);
-//    std::cout << "Socket: " << sock << std::endl;
-//    // TODO check >= 0, what does 0 mean?
-//    nn_setsockopt (sock, NN_SUB, NN_SOCKET_NAME, name.c_str(), name.size());
-//    std::string url = iter->second;
-//    std::cout << "URL: " << url << std::endl;
-//    int result = nn_bind(sock, url.c_str());
-//    // TODO check the result
-//    return sock;
-//  } else {
-//    return MessageMux::SpecifiedMuxNotAvailable;
-//  }
-//}
 
 } // namespace message_mux_demux
