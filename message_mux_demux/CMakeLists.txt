@@ -40,6 +40,7 @@ catkin_package(
 # Project Configuration
 ##############################################################################
 
+# upgrade to c11 as soon as we are able.
 ecl_enable_cxx0x_compiler()
 add_definitions(${catkin_DEFINITIONS})
 include_directories(include ${catkin_INCLUDE_DIRS})

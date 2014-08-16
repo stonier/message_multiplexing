@@ -24,6 +24,7 @@ the extra creation of ports does get somewhat costly.
 
 Todos:
 
+* zero-copy buffer allocations via nn_allocmsg for nanomsg transport
 * transports - mux and demux should separate the actual underlying transport (nanomsg/serial...)
 * handle use case in which packets are gathered and sent (e.g. kobuki style)
  * optional flag when sending that belays the send.
