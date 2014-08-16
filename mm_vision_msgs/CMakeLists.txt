@@ -11,7 +11,9 @@ project(mm_vision_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
     ecl_build
-    mm_core_msgs
+    ecl_time
+    ecl_utilities
+    mm_messages
 )
 
 ##############################################################################
@@ -23,7 +25,9 @@ catkin_package(
     #LIBRARIES ${PROJECT_NAME}
     CATKIN_DEPENDS
         ecl_build
-        mm_core_msgs
+        ecl_time
+        ecl_utilities
+        mm_messages
 )
 
 ##############################################################################
@@ -40,7 +44,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 ##############################################################################
 
 add_subdirectory(include)
-#add_subdirectory(src)
+add_subdirectory(src)
 
 ##############################################################################
 # Installs
