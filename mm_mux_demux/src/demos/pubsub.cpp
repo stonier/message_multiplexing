@@ -23,7 +23,7 @@
 ** Methods
 *****************************************************************************/
 
-void foo(const std::string& data) {
+void foo(std::string data) {
   std::cout << "foo is processing data: " << data << std::endl;
 }
 /*****************************************************************************
@@ -61,14 +61,14 @@ int main(int argc, char **argv)
   } else if ( sub.isSet() ) {
     mm_mux_demux::MessageDemux::registerDemux("dude", ip.getValue());
     std::cout << "Creating demux"<< std::endl;
-    mm_mux_demux::Subscriber<std::string, mm_core_msgs::TestStrings> subscriber("dude", foo);
+    mm_mux_demux::Subscriber<mm_core_msgs::TestStrings, std::string> subscriber("dude", foo);
     while(true) {
       ecl::MilliSleep()(200);
     }
   } else if ( both.isSet() ) {
     mm_mux_demux::MessageMux::registerMux("dude", ip.getValue());
     mm_mux_demux::MessageDemux::registerDemux("dude", ip.getValue());
-    mm_mux_demux::Subscriber<std::string, mm_core_msgs::TestStrings> subscriber("dude", foo);
+    mm_mux_demux::Subscriber<mm_core_msgs::TestStrings, std::string> subscriber("dude", foo);
     mm_mux_demux::Publisher publisher("dude", "ipc:///tmp/pubsub.ipc");
     ecl::MilliSleep()(200); // let the connection establish itself
     publisher.publish(mm_core_msgs::TestStrings, std::string("dude"));

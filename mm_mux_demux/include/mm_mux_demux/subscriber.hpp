@@ -33,7 +33,7 @@ namespace mm_mux_demux {
 ** Interfaces
 *****************************************************************************/
 
-template<typename DataType, unsigned int ID>
+template<unsigned int ID, typename DataType>
 class Subscriber {
 public:
   typedef mm_messages::MessageRegistry MessageRegistry;
@@ -47,10 +47,10 @@ public:
    * @param f : the global/static function.
    */
   Subscriber(const std::string& name,
-             void (*f)(const DataType&)) :
+             void (*f)(DataType)) :
     name(name),
     id(ID),
-    function(new ecl::UnaryFreeFunction<const DataType&>(f))
+    function(new ecl::UnaryFreeFunction<DataType>(f))
   {
     if ( !MessageRegistry::isRegistered(ID) ) {
       std::stringstream ss;
@@ -62,7 +62,7 @@ public:
       ss << "id '" << id << "' is registered, but not with this type";
       throw mm_messages::InvalidIDTypeCombination(ss.str());
     }
-    MessageDemux::registerSubscriber(name, id, &Subscriber<DataType, ID>::processPacket, (*this));
+    MessageDemux::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
   }
   /**
    * Construct with a callback to a member function.
@@ -75,12 +75,12 @@ public:
    */
   template<typename C>
   Subscriber(const std::string& name,
-             void (C::*f)(const DataType&), C &c) :
+             void (C::*f)(DataType), C &c) :
     name(name),
     id(ID),
-    function(new ecl::PartiallyBoundUnaryMemberFunction<C,const DataType&,void>(f,c))
+    function(new ecl::PartiallyBoundUnaryMemberFunction<C, DataType,void>(f,c))
   {
-    MessageDemux::registerSubscriber(name, id, &Subscriber<DataType, ID>::processPacket, (*this));
+    MessageDemux::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
   }
   virtual ~Subscriber() {
     MessageDemux::unregisterSubscriber(name, id);
@@ -95,7 +95,7 @@ public:
 private:
   std::string name;
   unsigned int id;
-  ecl::UnaryFunction<const DataType&,void> *function;
+  ecl::UnaryFunction<DataType,void> *function;
 };
 
 } // namespace mm_mux_demux
