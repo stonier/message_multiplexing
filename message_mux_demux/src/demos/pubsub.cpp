@@ -42,7 +42,7 @@ int main(int argc, char **argv)
   /****************************************
    ** Args
    ****************************************/
-  ecl::CmdLine cmd("Captures and streams images over tcp.");
+  ecl::CmdLine cmd("Pub-sub testing with nanomsg.");
   ecl::SwitchArg pub("p", "pub", "Run the publisher only", false);
   ecl::SwitchArg sub("s", "sub", "Run the subscriber only", false);
   ecl::SwitchArg both("b", "both", "Run both the publisher and the subscriber", false);
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
   xorlist.push_back(&sub);
   xorlist.push_back(&both);
   cmd.xorAdd(xorlist);
-  ecl::UnlabeledValueArg<std::string> ip("ip","Ip to use", false,"ipc:///tmp/pubsub.ipc","string", cmd);
+  ecl::UnlabeledValueArg<std::string> ip("ip","Ip to use (e.g. ipc:///tmp/pubsub.ipc, tcp://192.168.1.3:5555)", false,"ipc:///tmp/pubsub.ipc","string", cmd);
   cmd.parse(argc, argv);
 
   if ( pub.isSet() ) {
