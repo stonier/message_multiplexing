@@ -19,7 +19,9 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <thread>
+// need c11
+// #include <thread>
+#include <ecl/threads.hpp>
 
 /*****************************************************************************
 ** Namespaces
@@ -71,7 +73,8 @@ private:
   int endpoint_id; // used by nanomsg to id the endpoint connected to the socket (used in shutdown).
   bool verbose;
   bool shutdown_requested;
-  std::thread thread;
+  ecl::Thread thread;
+  //std::thread thread;
   SubscriberMap subscribers;
   ecl::Mutex mutex;
 };

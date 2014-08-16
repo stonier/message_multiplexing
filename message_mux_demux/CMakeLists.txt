@@ -11,6 +11,7 @@ project(message_mux_demux)
 
 find_package(catkin REQUIRED COMPONENTS
     ecl_build
+    ecl_command_line
     ecl_containers
     ecl_threads
     ecl_time
@@ -27,6 +28,7 @@ catkin_package(
     LIBRARIES ${PROJECT_NAME}
     CATKIN_DEPENDS
         ecl_build
+        ecl_command_line
         ecl_containers
         ecl_threads
         ecl_time

@@ -41,7 +41,10 @@ MessageDemux::MessageDemux(const std::string& name,
   nn_setsockopt (socket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
   endpoint_id = nn_connect(socket, url.c_str());
   // TODO check the result and throw exceptions
-  thread = std::thread(&MessageDemux::spin, this);
+  // std::thread call, need c11
+  // thread = std::thread(&MessageDemux::spin, this);
+  // ecl::Thread call
+  thread.start(&MessageDemux::spin, *this);
 }
 
 MessageDemux::MessageDemux(const MessageDemux& other) {
@@ -57,8 +60,12 @@ MessageDemux::MessageDemux(const MessageDemux& other) {
 MessageDemux::~MessageDemux()
 {
   mutex.lock();
-  for(auto& pair : subscribers) {
-    delete pair.second;
+  // c11 call
+  // for(auto& pair : subscribers) {
+  //     delete pair.second;
+  // }
+  for (SubscriberMapIterator iter = subscribers.begin(); iter != subscribers.end(); ++iter) {
+    delete iter->second;
   }
   subscribers.clear();
   mutex.unlock();
