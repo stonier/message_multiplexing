@@ -14,12 +14,13 @@
 ** Includes
 *****************************************************************************/
 
+#include <ecl/time.hpp>
 #include <iostream>
+#include <mm_messages/exceptions.hpp>
+#include <mm_messages/registry.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <mm_messages/exceptions.hpp>
-#include <mm_messages/registry.hpp>
 #include "mux.hpp"
 
 /*****************************************************************************
@@ -61,11 +62,15 @@ public:
       throw mm_messages::InvalidIDTypeCombination(ss.str());
     }
     ByteArray buffer;
+    //stopwatch.restart();
     mm_messages::Message<T>::encode(msg, buffer);
+    //std::cout << static_cast<int>(1000*stopwatch.split()) << std::endl;
     int result = MessageMux::send(name, id, buffer);
+    //std::cout << static_cast<int>(1000*stopwatch.split()) << std::endl;
   }
 
 private:
+//  ecl::StopWatch stopwatch;
   std::string name;
 };
 
