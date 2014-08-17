@@ -23,6 +23,10 @@ namespace mm_messages {
 *****************************************************************************/
 
 void Message<std::string>::encode(const std::string& s, ByteArray& buffer) {
+  // publishers always send empty buffers, but in case others use this
+  if(!buffer.empty()) {
+    buffer.clear();
+  }
   buffer.insert(buffer.end(), s.begin(), s.end());
 }
 

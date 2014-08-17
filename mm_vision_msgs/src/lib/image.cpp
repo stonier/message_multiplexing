@@ -30,7 +30,9 @@ namespace mm_messages {
  * @param buffer
  */
 void Message<mm_vision_msgs::ImagePtr>::encode(const mm_vision_msgs::ImagePtr& image, ByteArray& buffer) {
-  buffer.insert(buffer.end(), image->data.begin(), image->data.end());
+  // we might like to do something more tricky once we can use c++11 here (like std::move) to avoid
+  // copying buffers.
+  buffer = image->data;
 }
 
 /**

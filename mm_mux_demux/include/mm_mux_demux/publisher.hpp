@@ -60,9 +60,9 @@ public:
       ss << "id '" << id << "' is registered, but not with this type";
       throw mm_messages::InvalidIDTypeCombination(ss.str());
     }
-    ByteArray msg_buffer;
-    mm_messages::Message<T>::encode(msg, msg_buffer);
-    int result = MessageMux::send(name, id, msg_buffer);
+    ByteArray buffer;
+    mm_messages::Message<T>::encode(msg, buffer);
+    int result = MessageMux::send(name, id, buffer);
   }
 
 private:

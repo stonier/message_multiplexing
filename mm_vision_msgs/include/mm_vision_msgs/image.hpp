@@ -36,6 +36,7 @@ namespace mm_vision_msgs {
  * structure which we can fling around. This is it.
  */
 struct Image {
+  Image() {}
   std::vector<unsigned char> data;
   bool colour;
   unsigned int width, height, size; // calculate from incoming buffer sizes
