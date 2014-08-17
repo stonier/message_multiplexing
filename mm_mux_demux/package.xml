@@ -16,6 +16,7 @@
   <build_depend>ecl_build</build_depend>
   <build_depend>ecl_command_line</build_depend>
   <build_depend>ecl_containers</build_depend>
+  <build_depend>ecl_formatters</build_depend>
   <build_depend>ecl_threads</build_depend>
   <build_depend>ecl_time</build_depend>
   <build_depend>ecl_utilities</build_depend>
@@ -26,6 +27,7 @@
   <run_depend>ecl_build</run_depend>
   <run_depend>ecl_command_line</run_depend>
   <run_depend>ecl_containers</run_depend>
+  <run_depend>ecl_formatters</run_depend>
   <run_depend>ecl_threads</run_depend>
   <run_depend>ecl_time</run_depend>
   <run_depend>ecl_utilities</run_depend>

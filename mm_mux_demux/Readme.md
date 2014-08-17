@@ -39,3 +39,10 @@ Maybe dos:
 
 * Relax the one subscriber per packet id constraint.
 
+### Testing
+
+You can test the subscriber end of a connection without programming using `nanocat`. An example:
+
+```
+> nanocat --sub --connect tcp://192.168.1.3:5555 --ascii
+```

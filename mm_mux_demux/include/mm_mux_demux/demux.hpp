@@ -22,6 +22,7 @@
 // need c11
 // #include <thread>
 #include <ecl/threads.hpp>
+#include "verbosity.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -36,7 +37,7 @@ namespace impl {
 
 class MessageDemux {
 public:
-  MessageDemux(const std::string& name, const std::string& url, const bool verbose=false);
+  MessageDemux(const std::string& name, const std::string& url, const mm_mux_demux::Verbosity::Level& verbosity=mm_mux_demux::Verbosity::QUIET);
   MessageDemux(const MessageDemux& other);
   ~MessageDemux();
   void spin();
@@ -71,7 +72,7 @@ private:
   std::string name;
   int socket;
   int endpoint_id; // used by nanomsg to id the endpoint connected to the socket (used in shutdown).
-  bool verbose;
+  mm_mux_demux::Verbosity::Level verbosity;
   bool shutdown_requested;
   ecl::Thread thread;
   //std::thread thread;
@@ -99,7 +100,7 @@ public:
   typedef std::map<std::string, std::shared_ptr<impl::MessageDemux>>::iterator DemuxMapIterator;
   typedef std::map<std::string, std::shared_ptr<impl::MessageDemux>>::const_iterator DemuxMapConstIterator;
 
-  static void registerDemux(const std::string& name, const std::string& url, const bool verbose=false);
+  static void registerDemux(const std::string& name, const std::string& url, const Verbosity::Level& verbosity = Verbosity::QUIET);
   static void unregisterDemux(const std::string& name);
   static void shutdown();  // shutdown all demux spin threads
   static void shutdown(const std::string& name);  // shutdown only this demux spin thread

@@ -7,11 +7,13 @@
 ** Includes
 *****************************************************************************/
 
+#include <ecl/formatters.hpp>
 #include <iostream>
 #include <mm_messages/headers.hpp>
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
 #include "../../include/mm_mux_demux/demux.hpp"
+#include "../../include/mm_mux_demux/verbosity.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -26,17 +28,17 @@ namespace impl {
 
 MessageDemux::MessageDemux(const std::string& name,
                            const std::string& url,
-                           const bool verbose) :
+                           const mm_mux_demux::Verbosity::Level& verbosity) :
     name(name),
     socket(0),
-    verbose(verbose),
+    verbosity(verbosity),
     shutdown_requested(false),
     thread() // defer start of the thread
 {
   socket = nn_socket (AF_SP, NN_SUB);
   nn_setsockopt (socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
   nn_setsockopt (socket, NN_SOL_SOCKET, NN_SOCKET_NAME, name.c_str(), name.size());
-  int timeout = 100; // timeout of 10ms
+  int timeout = 100; // timeout of 10ms (facilitates shutdown).
   nn_setsockopt (socket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
   endpoint_id = nn_connect(socket, url.c_str());
   // TODO check the result and throw exceptions
@@ -49,7 +51,7 @@ MessageDemux::MessageDemux(const std::string& name,
 MessageDemux::MessageDemux(const MessageDemux& other) {
   socket = other.socket;
   name = other.name;
-  verbose = other.verbose;
+  verbosity = other.verbosity;
   shutdown_requested = other.shutdown_requested;
   endpoint_id = other.endpoint_id;
   // this bugger forced us to write the copy constructor...get 'use of deleted function' otherwise
@@ -73,6 +75,7 @@ MessageDemux::~MessageDemux()
 }
 
 void MessageDemux::spin() {
+  ecl::Format<unsigned int> format(10, ecl::RightAlign);
   while (!shutdown_requested)
   {
     unsigned char *buffer = NULL;
@@ -84,17 +87,20 @@ void MessageDemux::spin() {
       }
       // TODO handle errors : http://nanomsg.org/v0.4/nn_recv.3.html
     }
-    if ( verbose ) {
-      std::cout << "Demux : [" << bytes << "] ";
-      std::cout << std::hex;
-      for(unsigned int i=0; i < bytes; ++i ) {
-        std::cout << static_cast<unsigned int>(*(buffer+i)) << " ";
-      }
-      std::cout << std::dec;
-      std::cout << std::endl;
-    }
     mm_messages::PacketHeader header = mm_messages::Message<mm_messages::PacketHeader>::decode(buffer, mm_messages::PacketHeader::size);
     mm_messages::SubPacketHeader subheader = mm_messages::Message<mm_messages::SubPacketHeader>::decode(buffer + mm_messages::PacketHeader::size, mm_messages::SubPacketHeader::size);
+    if ( verbosity > mm_mux_demux::Verbosity::QUIET ) {
+      std::cout << "[" << ecl::TimeStamp() << "] Demux : [id: " << format(subheader.id) << "]";
+      std::cout << "[bytes: " << format(bytes) << "]" << std::endl;
+      if ( verbosity > mm_mux_demux::Verbosity::LOW ) {
+        std::cout << std::hex;
+        for(unsigned int i=0; i < bytes; ++i ) {
+          std::cout << static_cast<unsigned int>(*(buffer+i)) << " ";
+        }
+        std::cout << std::dec;
+        std::cout << std::endl;
+      }
+    }
     mutex.lock();
     SubscriberMapIterator iter = subscribers.find(subheader.id);
     if (iter != subscribers.end()) {
@@ -141,13 +147,13 @@ namespace mm_mux_demux {
 
 void MessageDemux::registerDemux(const std::string& name,
                                  const std::string& url,
-                                 const bool verbose)
+                                 const Verbosity::Level& verbosity)
 {
   DemuxMapConstIterator iter = demultiplexers().find(name);
   if ( iter == demultiplexers().end() ) {
     std::pair<DemuxMapIterator,bool> result;
     result = demultiplexers().insert(
-        DemuxMapPair(name, std::make_shared<impl::MessageDemux>(name, url, verbose)));
+        DemuxMapPair(name, std::make_shared<impl::MessageDemux>(name, url, verbosity)));
   }
 }
 
