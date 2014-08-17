@@ -83,24 +83,24 @@ mm_vision_msgs::ImagePairPtr Message<mm_vision_msgs::ImagePairPtr>::decode(const
   mm_vision_msgs::ImagePairPtr pair = std::make_shared<mm_vision_msgs::ImagePair>();
   pair->left.assign(buffer, buffer + size/2); // c++0x buffer+size -> std::end(buffer) instead of size?
   pair->right.assign(buffer + size/2, buffer + size); // c++0x buffer+size -> std::end(buffer) instead of size?
-  if (size == 76800) { // QVGA
+  pair->size = size/2;  // single image size
+  if (pair->size == 76800) { // QVGA
     pair->width = 320;
     pair->height = 240;
     pair->colour = false;
-  } else if (size == 153600) { // CQVGA
+  } else if (pair->size == 153600) { // CQVGA
     pair->width = 320;
     pair->height = 240;
     pair->colour = true;
-  } else if (size == 307200) { // VGA
+  } else if (pair->size == 307200) { // VGA
     pair->width = 640;
     pair->height = 480;
     pair->colour = false;
-  } else if (size == 614400) { // CVGA
+  } else if (pair->size == 614400) { // CVGA
     pair->width = 640;
     pair->height = 480;
     pair->colour = true;
   }
-  pair->size = size/2;
   return pair;
 }
 
