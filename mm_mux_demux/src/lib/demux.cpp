@@ -30,6 +30,7 @@ MessageDemux::MessageDemux(const std::string& name,
                            const std::string& url,
                            const mm_mux_demux::Verbosity::Level& verbosity) :
     name(name),
+    url(url),
     socket(0),
     verbosity(verbosity),
     shutdown_requested(false),
@@ -91,7 +92,8 @@ void MessageDemux::spin() {
     mm_messages::SubPacketHeader subheader = mm_messages::Message<mm_messages::SubPacketHeader>::decode(buffer + mm_messages::PacketHeader::size, mm_messages::SubPacketHeader::size);
     if ( verbosity > mm_mux_demux::Verbosity::QUIET ) {
       std::cout << "[" << ecl::TimeStamp() << "] Demux : [id: " << format(subheader.id) << "]";
-      std::cout << "[bytes: " << format(bytes) << "]" << std::endl;
+      std::cout << "[bytes: " << format(bytes) << "]";
+      std::cout << "[" << url << "]" << std::endl;
       if ( verbosity > mm_mux_demux::Verbosity::LOW ) {
         std::cout << std::hex;
         for(unsigned int i=0; i < bytes; ++i ) {
@@ -153,7 +155,8 @@ void MessageDemux::registerDemux(const std::string& name,
   if ( iter == demultiplexers().end() ) {
     std::pair<DemuxMapIterator,bool> result;
     result = demultiplexers().insert(
-        DemuxMapPair(name, std::make_shared<impl::MessageDemux>(name, url, verbosity)));
+        DemuxMapPair(name, std::make_shared<impl::MessageDemux>(name, url, verbosity))
+    );
   }
 }
 

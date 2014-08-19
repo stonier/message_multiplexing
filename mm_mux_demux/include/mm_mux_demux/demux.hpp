@@ -70,6 +70,7 @@ private:
   typedef std::pair<std::map<unsigned int, BufferCallbackFunction>::iterator,bool> SubscriberMapResultPair;
 
   std::string name;
+  std::string url;  // copy of the connection url used for debugging purposes.
   int socket;
   int endpoint_id; // used by nanomsg to id the endpoint connected to the socket (used in shutdown).
   mm_mux_demux::Verbosity::Level verbosity;
