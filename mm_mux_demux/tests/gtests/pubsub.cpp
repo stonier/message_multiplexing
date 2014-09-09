@@ -14,6 +14,7 @@
 #include "../../include/mm_mux_demux/demux.hpp"
 #include "../../include/mm_mux_demux/publisher.hpp"
 #include "../../include/mm_mux_demux/subscriber.hpp"
+#include <mm_core_msgs/string.hpp>
 
 /*****************************************************************************
  ** Namespace
@@ -27,13 +28,13 @@ using namespace mm_mux_demux;
 
 // We use 1000's by convention for test packet id's
 enum {
-  TestPubSub = 1001,
+  TestPubSub = 9990,
 };
 
 MM_REGISTER_PACKET_INFO(TestPubSub, std::string, "Foo");
 
 struct Foo {
-  void foo_cb(const std::string& msg) {
+  void foo_cb(std::string msg) {
     foo_msg = msg;
   }
   std::string foo_msg;
@@ -46,7 +47,7 @@ TEST(MessageMuxDemux,pubsub) {
   Foo foo;
   mm_mux_demux::MessageMux::registerMux("dude", "ipc:///tmp/pubsub.ipc");
   mm_mux_demux::MessageDemux::registerDemux("dude", "ipc:///tmp/pubsub.ipc");
-  mm_mux_demux::Subscriber<std::string, TestPubSub> subscriber("dude", &Foo::foo_cb, foo);
+  mm_mux_demux::Subscriber<TestPubSub, std::string> subscriber("dude", &Foo::foo_cb, foo);
   mm_mux_demux::Publisher publisher("dude", "ipc:///tmp/pubsub.ipc");
   ecl::MilliSleep()(200); // let the connection establish itself
   publisher.publish(TestPubSub, std::string("dude"));

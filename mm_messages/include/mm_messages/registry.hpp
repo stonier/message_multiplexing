@@ -110,10 +110,18 @@ struct RegistryEntry {
 // are called for the same id, with different types, you will get
 // 1) a compile time error if they are in the same translation unit OR
 // 2) a runtime error (exception) if they are in different, but linked translation units
-#define MM_REGISTER_PACKET_INFO(id, T, Description) \
-  namespace mm_messages_registry_entries { \
-    const mm_messages::RegistryEntry<id, T> unused_packet_info_##__COUNTER__(Description); \
-  }
 
+// This requires some heavy macro expansions to work with __COUNTER__ so that
+// __COUNTER__ gets expanded *before* concatenation happens (this is what goes
+// wrong in a naive one line implementation). See this url for details:
+//
+//    http://blog.aaronballman.com/2011/12/stupid-compiler-tricks/
+//
+#define MM_REGISTER_IMP_2(uuid) unused_packet_info_##uuid
+#define MM_REGISTER_IMP_1(id, T, Description, uuid) \
+    namespace mm_messages_registry_entries { \
+      const mm_messages::RegistryEntry<id, T> MM_REGISTER_IMP_2(uuid)(Description); \
+    }
+#define MM_REGISTER_PACKET_INFO(id, T, Description) MM_REGISTER_IMP_1(id, T, Description, __COUNTER__)
 
 #endif /* mm_messages_REGISTRY_HPP_ */

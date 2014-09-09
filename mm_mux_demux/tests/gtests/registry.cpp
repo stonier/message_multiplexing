@@ -9,23 +9,23 @@
 
 #include <gtest/gtest.h>
 #include <iostream>
-#include "../../include/mm_mux_demux/registry.hpp"
+#include <mm_messages/registry.hpp>
 
 /*****************************************************************************
  ** Namespace
  *****************************************************************************/
 
-using namespace mm_mux_demux;
+using namespace mm_messages;
 
 /*****************************************************************************
 ** Registrations
 *****************************************************************************/
 
 enum {
-  Description,
-  UnMatchedBeanCount,
-  MatchedBeanCount,
-  Reserved
+  Description = 9990,
+  UnMatchedBeanCount = 9991,
+  MatchedBeanCount = 9992,
+  Reserved = 9993
 };
 
 MM_REGISTER_PACKET_INFO(Description, std::string, "Description of the current state of the system.");
