@@ -14,9 +14,15 @@
 
   <build_depend>ecl_build</build_depend>
   <build_depend>ecl_containers</build_depend>
+  <build_depend>ecl_format</build_depend>
+  <build_depend>ecl_time</build_depend>
   <build_depend>ecl_utilities</build_depend>
+  <build_depend>nanomsg</build_depend>  <!-- Not really ideal to have in here, split later if we want different transports -->
 
   <run_depend>ecl_build</run_depend>
   <run_depend>ecl_containers</run_depend>
+  <run_depend>ecl_format</run_depend>
+  <run_depend>ecl_time</run_depend>
   <run_depend>ecl_utilities</run_depend>
+  <run_depend>nanomsg</run_depend>  <!-- Not really ideal to have in here, split later if we want different transports -->
 </package>

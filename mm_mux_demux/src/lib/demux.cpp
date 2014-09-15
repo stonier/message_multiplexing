@@ -9,11 +9,10 @@
 
 #include <ecl/formatters.hpp>
 #include <iostream>
-#include <mm_messages/headers.hpp>
+#include <mm_messages.hpp>
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
 #include "../../include/mm_mux_demux/demux.hpp"
-#include "../../include/mm_mux_demux/verbosity.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -28,7 +27,9 @@ namespace impl {
 
 MessageDemux::MessageDemux(const std::string& name,
                            const std::string& url,
-                           const mm_mux_demux::Verbosity::Level& verbosity) :
+                           const mm_messages::Verbosity::Level& verbosity,
+                           const bool bind
+                          ) :
     name(name),
     url(url),
     socket(0),
@@ -37,13 +38,33 @@ MessageDemux::MessageDemux(const std::string& name,
     thread() // defer start of the thread
 {
   socket = nn_socket (AF_SP, NN_SUB);
+  if ( socket < 0 ) {
+    // TODO : throw exception
+    std::cout << "Demux socket error: " << nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
+  }
   nn_setsockopt (socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
   nn_setsockopt (socket, NN_SOL_SOCKET, NN_SOCKET_NAME, name.c_str(), name.size());
   int timeout = 100; // timeout of 10ms (facilitates shutdown).
   nn_setsockopt (socket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
-  endpoint_id = nn_connect(socket, url.c_str());
-  // TODO check the result and throw exceptions
-  // std::thread call, need c11
+  if ( bind ) {
+    endpoint_id = nn_bind(socket, url.c_str());
+  } else {
+    endpoint_id = nn_connect(socket, url.c_str());
+  }
+  if (endpoint_id < 0) {
+    // TODO : throw exception
+    std::cout << "Demux connect error: " << nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
+  }
+  if (verbosity > mm_messages::Verbosity::QUIET) {
+
+    std::cout << "[" << ecl::TimeStamp() << "] MessageDemux : [" << name << "][" << url << "][" << socket << "][" << endpoint_id << "]";
+    if ( bind ) {
+      std::cout << "[bind]" << std::endl;
+    } else {
+      std::cout << "[connect]" << std::endl;
+    }
+  }
+  // std::thread call, need c++11
   // thread = std::thread(&MessageDemux::spin, this);
   // ecl::Thread call
   thread.start(&MessageDemux::spin, *this);
@@ -76,11 +97,10 @@ MessageDemux::~MessageDemux()
 }
 
 void MessageDemux::spin() {
-  ecl::Format<unsigned int> format(10, ecl::RightAlign);
   while (!shutdown_requested)
   {
     unsigned char *buffer = NULL;
-    int bytes = nn_recv (socket, &buffer, NN_MSG, 0);
+    int bytes = ::nn_recv(socket, &buffer, NN_MSG, 0);
     if ( bytes < 0 ) {
       // We set socket options in the constructor to timeout as opposed to default infinite blocking
       if (nn_errno() == EAGAIN) {
@@ -90,18 +110,18 @@ void MessageDemux::spin() {
     }
     mm_messages::PacketHeader header = mm_messages::Message<mm_messages::PacketHeader>::decode(buffer, mm_messages::PacketHeader::size);
     mm_messages::SubPacketHeader subheader = mm_messages::Message<mm_messages::SubPacketHeader>::decode(buffer + mm_messages::PacketHeader::size, mm_messages::SubPacketHeader::size);
-    if ( verbosity > mm_mux_demux::Verbosity::QUIET ) {
-      std::cout << "[" << ecl::TimeStamp() << "] Demux : [id: " << format(subheader.id) << "]";
-      std::cout << "[bytes: " << format(bytes) << "]";
-      std::cout << "[" << url << "]" << std::endl;
-      if ( verbosity > mm_mux_demux::Verbosity::LOW ) {
+    if ( verbosity > mm_messages::Verbosity::QUIET ) {
+      std::cout << "[" << ecl::TimeStamp() << "] Demux: [" << subheader.id << "]";
+      std::cout << "[" << bytes << "][";
+      if ( verbosity > mm_messages::Verbosity::LOW ) {
         std::cout << std::hex;
         for(unsigned int i=0; i < bytes; ++i ) {
           std::cout << static_cast<unsigned int>(*(buffer+i)) << " ";
         }
         std::cout << std::dec;
-        std::cout << std::endl;
+        std::cout << "]";
       }
+      std::cout << std::endl;
     }
     mutex.lock();
     SubscriberMapIterator iter = subscribers.find(subheader.id);
@@ -118,12 +138,12 @@ void MessageDemux::spin() {
  * hang around.
  */
 void MessageDemux::shutdown() {
-  if ( socket > 0 ) {
-    int result = nn_shutdown (socket, endpoint_id);
-  }
   if ( !shutdown_requested ) {
     shutdown_requested = true;
     thread.join();
+  }
+  if ( socket > 0 ) {
+    int result = nn_shutdown (socket, endpoint_id);
   }
 }
 
@@ -147,21 +167,21 @@ namespace mm_mux_demux {
 ** Globals
 *****************************************************************************/
 
-void MessageDemux::registerDemux(const std::string& name,
-                                 const std::string& url,
-                                 const Verbosity::Level& verbosity)
+void MessageDemux::start(const std::string& name,
+                         const std::string& url,
+                         const mm_messages::Verbosity::Level& verbosity,
+                         const bool bind
+                        )
 {
   DemuxMapConstIterator iter = demultiplexers().find(name);
   if ( iter == demultiplexers().end() ) {
     std::pair<DemuxMapIterator,bool> result;
     result = demultiplexers().insert(
-        DemuxMapPair(name, std::make_shared<impl::MessageDemux>(name, url, verbosity))
+        DemuxMapPair(name, std::make_shared<impl::MessageDemux>(name, url, verbosity, bind))
     );
+  } else if ( !url.empty() ) {
+    // TODO : throw an exception, name-url already present.
   }
-}
-
-void MessageDemux::unregisterDemux(const std::string& name) {
-  // TODO : unregister
 }
 
 void MessageDemux::shutdown() {
@@ -169,6 +189,7 @@ void MessageDemux::shutdown() {
   for (iter; iter != demultiplexers().end(); ++iter) {
     (iter->second)->shutdown();
   }
+  // TODO : delete from map
 }
 
 void MessageDemux::shutdown(const std::string& name) {
@@ -176,6 +197,7 @@ void MessageDemux::shutdown(const std::string& name) {
   if ( iter != demultiplexers().end() ) {
     (iter->second)->shutdown();
   }
+  // TODO : delete from map
 }
 
 MessageDemux::DemuxMap& MessageDemux::demultiplexers()

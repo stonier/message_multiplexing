@@ -25,7 +25,7 @@ namespace mm_messages {
 const unsigned int PacketHeader::size = sizeof(unsigned int);
 const unsigned int SubPacketHeader::size = 2*sizeof(unsigned int);
 
-SubPacketHeader::SubPacketHeader(const unsigned int& id, const unsigned int& length)
+SubPacketHeader::SubPacketHeader(const int& id, const unsigned int& length)
   : id(id)
   , length(length)
 {}

@@ -1,5 +1,5 @@
 /**
- * @file /mm_mux_demux/include/mm_mux_demux/publisher.hpp
+ * @file /mm_messages/include/mm_messages/verbosity.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,33 +7,31 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef mm_mux_demux_PUBLISHER_HPP_
-#define mm_mux_demux_PUBLISHER_HPP_
+#ifndef mm_messages_VERBOSITY_HPP_
+#define mm_messages_VERBOSITY_HPP_
 
 /*****************************************************************************
 ** Includes
 *****************************************************************************/
 
-#include <ecl/time.hpp>
-#include <iostream>
-#include <mm_messages.hpp>
-#include <sstream>
-#include <string>
-#include <vector>
-#include "mux.hpp"
-
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace mm_mux_demux {
+namespace mm_messages {
 
 /*****************************************************************************
 ** Interfaces
 *****************************************************************************/
 
-typedef mm_messages::Publisher<MessageMux> Publisher;
+struct Verbosity {
+  enum Level {
+    QUIET,
+    LOW,  // just show packet statistics
+    HIGH  // show raw bytes of incoming packets
+  };
+};
 
-} // namespace mm_mux_demux
+} // namespace mm_messages
 
-#endif /* mm_mux_demux_PUBLISHER_HPP_ */
+#endif /* mm_messages_VERBOSITY_HPP_ */

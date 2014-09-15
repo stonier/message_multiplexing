@@ -8,10 +8,11 @@
 *****************************************************************************/
 
 #include <iostream>
-#include <mm_messages/headers.hpp>
-#include <mm_messages/message.hpp>
-#include <nanomsg/nn.h>
+#include <ecl/time/timestamp.hpp>
+#include <mm_messages.hpp>
 #include <nanomsg/pubsub.h>
+#include <errno.h>
+#include <nanomsg/utils/err.h>
 #include "../../include/mm_mux_demux/mux.hpp"
 
 /*****************************************************************************
@@ -27,42 +28,62 @@ namespace impl {
 
 MessageMux::MessageMux(const std::string& name,
                        const std::string& url,
-                       const bool verbose) :
+                       const mm_messages::Verbosity::Level& verbosity,
+                       const bool bind) :
   name(name),
   url(url),
-  verbose(verbose)
+  verbosity(verbosity)
 {
   socket = nn_socket (AF_SP, NN_PUB);
-  // TODO check >= 0, what does 0 mean?
-  nn_setsockopt (socket, NN_SUB, NN_SOCKET_NAME, name.c_str(), name.size());
-  int unused_result = nn_bind(socket, url.c_str());
-  // TODO : check the result, throw exceptions if necessary
+  if ( socket < 0 ) {
+    // TODO : throw exception
+    std::cout << "Mux socket error: " << nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
+  }
+  nn_setsockopt (socket, NN_SOL_SOCKET, NN_SOCKET_NAME, name.c_str(), name.size());
+  if ( bind ) {
+    endpoint_id = nn_bind(socket, url.c_str());
+  } else {
+    endpoint_id = nn_connect(socket, url.c_str());
+  }
+  if (endpoint_id < 0) {
+    // TODO : throw exception
+    std::cout << "Mux bind error: " << nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
+  }
+  if (verbosity > mm_messages::Verbosity::QUIET) {
+    std::cout << "[" << ecl::TimeStamp() << "] MessageMux : [" << name << "][" << url << "][" << socket << "][" << endpoint_id << "]";
+    if ( bind ) {
+      std::cout << "[bind]" << std::endl;
+    } else {
+      std::cout << "[connect]" << std::endl;
+    }
+  }
 }
 
 MessageMux::~MessageMux() {
   if ( socket > 0 ) {
-    nn_shutdown (socket, 0);
+    nn_shutdown (socket, endpoint_id);
   }
 }
 
 int MessageMux::send(const unsigned int& id, const mm_messages::ByteArray& msg_buffer) {
-    mm_messages::ByteArray buffer;
-    mm_messages::Message<mm_messages::PacketHeader>::encode(mm_messages::PacketHeader(), buffer);
-    mm_messages::Message<mm_messages::SubPacketHeader>::encode(mm_messages::SubPacketHeader(id, msg_buffer.size()), buffer);
-    buffer.insert(buffer.end(), msg_buffer.begin(), msg_buffer.end());
+  // this is identical to radio's send, could be collapsed
+  mm_messages::ByteArray buffer;
+  mm_messages::Message<mm_messages::PacketHeader>::encode(mm_messages::PacketHeader(), buffer);
+  mm_messages::Message<mm_messages::SubPacketHeader>::encode(mm_messages::SubPacketHeader(id, msg_buffer.size()), buffer);
+  buffer.insert(buffer.end(), msg_buffer.begin(), msg_buffer.end());
 
-    if (verbose) {
-      std::cout << "Mux : [" << id << "][" << buffer.size() << "] ";
-      std::cout << std::hex;
-      for(unsigned int i=0; i < buffer.size(); ++i ) {
-        std::cout << static_cast<unsigned int>(buffer[i]) << " ";
-      }
-      std::cout << std::dec;
-      std::cout << std::endl;
+  if (verbosity > mm_messages::Verbosity::LOW) {
+    std::cout << "[" << ecl::TimeStamp() << "] Mux: [" << id << "][" << buffer.size() << "][";
+    std::cout << std::hex;
+    for(unsigned int i=0; i < buffer.size(); ++i ) {
+      std::cout << static_cast<unsigned int>(buffer[i]) << " ";
     }
-    int result = nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
-    // TODO : lots of error flags to check here
-    return 0;
+    std::cout << std::dec;
+    std::cout << "]" << std::endl;
+  }
+  int result = ::nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
+  // TODO : lots of error flags to check here
+  return 0;
 }
 
 } // namespace impl
@@ -83,7 +104,10 @@ namespace mm_mux_demux {
  * @param name
  * @param url
  */
-void MessageMux::registerMux(const std::string& name, const std::string& url, const bool verbose) {
+void MessageMux::start(const std::string& name,
+                             const std::string& url,
+                             const mm_messages::Verbosity::Level& verbosity,
+                             const bool bind) {
   MuxMapConstIterator iter = multiplexers().find(name);
   if ( iter == multiplexers().end() ) {
     if (url.empty()) {
@@ -91,15 +115,19 @@ void MessageMux::registerMux(const std::string& name, const std::string& url, co
     } else {
       std::pair<MuxMapIterator,bool> result;
       result = multiplexers().insert(
-          MuxMapPair(name, std::make_shared<impl::MessageMux>(name, url, verbose)));
+          MuxMapPair(name, std::make_shared<impl::MessageMux>(name, url, verbosity, bind)));
     }
   } else if ( !url.empty() ) {
     // TODO : throw an exception, name-url already present.
   }
 }
 
-void MessageMux::unregisterMux(const std::string& name) {
-  // TODO
+void MessageMux::shutdown(const std::string& name) {
+  multiplexers().erase(name);
+}
+
+void MessageMux::shutdown() {
+  multiplexers().clear();
 }
 
 MessageMux::MuxMap& MessageMux::multiplexers() {
@@ -114,7 +142,7 @@ int MessageMux::send(const std::string& name, const unsigned int& id, const mm_m
   } else {
     // exceptions exceptions...
     std::cout << "Mux : no mux by that name found (while trying to send)"<< std::endl;
-    return SpecifiedMuxNotAvailable;
+    return NotAvailable;
   }
 }
 

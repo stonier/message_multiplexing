@@ -35,8 +35,8 @@ struct PacketHeader {
 
 struct SubPacketHeader {
   static const unsigned int size;
-  SubPacketHeader(const unsigned int& id, const unsigned int& length);
-  unsigned int id;
+  SubPacketHeader(const int& id=-1, const unsigned int& length = 0);
+  int id;
   unsigned int length;
 };
 

@@ -49,9 +49,9 @@ int main(int argc, char **argv)
 
   //bool result = mm_messages::MessageRegistry::add<mm_core_msgs::TestStrings, std::string>("unused_description");
   if ( pub.isSet() ) {
-    mm_mux_demux::MessageMux::registerMux("dude", ip.getValue());
+    mm_mux_demux::MessageMux::start("dude", ip.getValue());
     std::cout << "Creating publisher" << std::endl;
-    mm_mux_demux::Publisher publisher("dude", "ipc:///tmp/pubsub.ipc");
+    mm_mux_demux::Publisher publisher("dude");
     ecl::MilliSleep()(200); // let the connection establish itself
     while(true) {
       std::cout << "Publishing 'dude'" << std::endl;
@@ -59,17 +59,18 @@ int main(int argc, char **argv)
       ecl::MilliSleep()(500);
     }
   } else if ( sub.isSet() ) {
-    mm_mux_demux::MessageDemux::registerDemux("dude", ip.getValue());
+    mm_mux_demux::MessageDemux::start("dude", ip.getValue());
     std::cout << "Creating demux"<< std::endl;
     mm_mux_demux::Subscriber<mm_core_msgs::TestStrings, std::string> subscriber("dude", foo);
     while(true) {
       ecl::MilliSleep()(200);
     }
+    mm_mux_demux::MessageDemux::shutdown("dude");
   } else if ( both.isSet() ) {
-    mm_mux_demux::MessageMux::registerMux("dude", ip.getValue());
-    mm_mux_demux::MessageDemux::registerDemux("dude", ip.getValue());
+    mm_mux_demux::MessageMux::start("dude", ip.getValue(), mm_messages::Verbosity::HIGH);
+    mm_mux_demux::MessageDemux::start("dude", ip.getValue(), mm_messages::Verbosity::HIGH);
     mm_mux_demux::Subscriber<mm_core_msgs::TestStrings, std::string> subscriber("dude", foo);
-    mm_mux_demux::Publisher publisher("dude", "ipc:///tmp/pubsub.ipc");
+    mm_mux_demux::Publisher publisher("dude");
     ecl::MilliSleep()(200); // let the connection establish itself
     publisher.publish(mm_core_msgs::TestStrings, std::string("dude"));
     ecl::MilliSleep()(500);

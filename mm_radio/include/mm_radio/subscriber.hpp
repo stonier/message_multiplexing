@@ -1,5 +1,5 @@
 /**
- * @file /mm_mux_demux/include/mm_mux_demux/subscriber.hpp
+ * @file /mm_radio/include/mm_radio/subscriber.hpp
  * 
  * @brief Short description of this file.
  **/
@@ -7,8 +7,8 @@
 ** Ifdefs
 *****************************************************************************/
 
-#ifndef mm_mux_demux_SUBSCRIBER_HPP_
-#define mm_mux_demux_SUBSCRIBER_HPP_
+#ifndef mm_radio_SUBSCRIBER_HPP_
+#define mm_radio_SUBSCRIBER_HPP_
 
 /*****************************************************************************
 ** Includes
@@ -18,13 +18,13 @@
 #include <mm_messages.hpp>
 #include <sstream>
 #include <string>
-#include "demux.hpp"
+#include "radio.hpp"
 
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
 
-namespace mm_mux_demux {
+namespace mm_radio {
 
 /*****************************************************************************
 ** Interfaces
@@ -59,7 +59,7 @@ public:
       ss << "id '" << id << "' is registered, but not with this type";
       throw mm_messages::InvalidIDTypeCombination(ss.str());
     }
-    MessageDemux::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
+    RadioMuxDemux::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
   }
   /**
    * Construct with a callback to a member function.
@@ -77,10 +77,10 @@ public:
     id(ID),
     function(new ecl::PartiallyBoundUnaryMemberFunction<C, DataType,void>(f,c))
   {
-    MessageDemux::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
+    RadioMuxDemux::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
   }
   virtual ~Subscriber() {
-    MessageDemux::unregisterSubscriber(name, id);
+    RadioMuxDemux::unregisterSubscriber(name, id);
     delete function;
   }
 
@@ -95,6 +95,6 @@ private:
   ecl::UnaryFunction<DataType,void> *function;
 };
 
-} // namespace mm_mux_demux
+} // namespace mm_radio
 
-#endif /* mm_mux_demux_SUBSCRIBER_HPP_ */
+#endif /* mm_radio_SUBSCRIBER_HPP_ */

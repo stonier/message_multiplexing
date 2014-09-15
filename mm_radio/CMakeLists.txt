@@ -12,6 +12,9 @@ project(mm_radio)
 find_package(catkin REQUIRED COMPONENTS
     ecl_build
     ecl_command_line
+    ecl_threads
+    ecl_time
+    ecl_utilities
     mm_core_msgs
     mm_messages
     nanomsg
@@ -27,6 +30,9 @@ catkin_package(
     CATKIN_DEPENDS
         ecl_build
         ecl_command_line
+        ecl_threads
+        ecl_time
+        ecl_utilities
         mm_core_msgs
         mm_messages
         nanomsg

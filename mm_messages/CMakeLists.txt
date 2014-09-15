@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
     ecl_build
     ecl_containers
     ecl_utilities
+    nanomsg
 )
 
 ##############################################################################
@@ -26,6 +27,7 @@ catkin_package(
         ecl_build
         ecl_containers
         ecl_utilities
+        nanomsg
 )
 
 ##############################################################################
