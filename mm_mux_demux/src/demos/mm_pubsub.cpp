@@ -1,5 +1,5 @@
 /**
- * @file /mm_mux_demux/src/pubsub.cpp
+ * @file /mm_mux_demux/src/mm_pubsub.cpp
  * 
  * @brief Short description of this file.
  **/

@@ -20,6 +20,12 @@ the extra creation of ports does get somewhat costly.
 * Subscriber : single packet type receiver which will convert a received buffer and relay to a user callback
 * MessageRegistry : global enabler for managing the mux/demux's and their connection with pubs/subs.
 
+### Socket Address Types
+
+* IntraProcess : `inproc://a`
+* InterProcess : `ipc:///tmp/test.ipc`
+* InterPC : `tcp://server001:5560`
+
 ### Roadmap
 
 Todos:

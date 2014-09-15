@@ -1,7 +1,5 @@
 /**
- * @file /mm_mux_demux/src/sample.cpp
- * 
- * @brief Short description of this file.
+ * @file /mm_mux_demux/src/nanomsg_pubsub.cpp
  **/
 /*****************************************************************************
 ** Includes
@@ -18,6 +16,7 @@
 
 #define SERVER "server"
 #define CLIENT "client"
+#define URL "ipc:///tmp/nanomsg_pubsub.ipc"
 
 char *date ()
 {
@@ -28,12 +27,14 @@ char *date ()
   return text;
 }
 
-int server (const char *url)
+int server ()
 {
   int sock = nn_socket (AF_SP, NN_PUB);
   assert (sock >= 0);
-  assert (nn_bind (sock, url) >= 0);
-  std::cout << "Asserted bind on " << url << std::endl;
+  int result;
+  result = nn_bind (sock, URL);
+  assert (result >= 0);
+  std::cout << "Asserted bind on " << URL << std::endl;
   while (1)
     {
       char *d = date();
@@ -46,23 +47,26 @@ int server (const char *url)
   return nn_shutdown (sock, 0);
 }
 
-int client (const char *url, const char *name)
+int client ()
 {
   int sock = nn_socket (AF_SP, NN_SUB);
   std::cout << "Socket: " << sock << std::endl;
   assert (sock >= 0);
   // TODO learn more about publishing/subscribe keys
-  assert (nn_setsockopt (sock, NN_SUB, NN_SUB_SUBSCRIBE, "", 0) >= 0);
+  int result;
+  result = nn_setsockopt (sock, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+  assert(result >= 0);
   std::cout << "Asserted nn_setsockopt" << std::endl;
-  assert (nn_connect (sock, url) >= 0);
-  std::cout << "Asserted nn_connect on " << url << std::endl;
+  result = nn_connect (sock, URL);
+  assert (result >= 0);
+  std::cout << "Asserted nn_connect on " << URL << std::endl;
+  std::cout << "Receiving"<< std::endl;
   while (1)
     {
-    std::cout << "Receiving"<< std::endl;
       char *buf = NULL;
       int bytes = nn_recv (sock, &buf, NN_MSG, 0);
       assert (bytes >= 0);
-      printf ("CLIENT (%s): RECEIVED %s\n", name, buf);
+      printf ("CLIENT: RECEIVED %s\n", buf);
       nn_freemsg (buf);
     }
   return nn_shutdown (sock, 0);
@@ -70,14 +74,12 @@ int client (const char *url, const char *name)
 
 int main (const int argc, const char **argv)
 {
-  if (strncmp (SERVER, argv[1], strlen (SERVER)) == 0 && argc >= 2)
-    return server (argv[2]);
-  else if (strncmp (CLIENT, argv[1], strlen (CLIENT)) == 0 && argc >= 3)
-    return client (argv[2], argv[3]);
-  else
-    {
-      fprintf (stderr, "Usage: pubsub %s|%s <URL> <ARG> ...\n",
-               SERVER, CLIENT);
-      return 1;
-    }
+  if (argc != 2) {
+    fprintf (stderr, "Usage: pubsub %s|%s \n", SERVER, CLIENT);
+    return 1;
+  }
+  if (strncmp(SERVER, argv[1], strlen(SERVER)) == 0)
+    return server();
+  else if (strncmp (CLIENT, argv[1], strlen (CLIENT)) == 0)
+    return client();
 }

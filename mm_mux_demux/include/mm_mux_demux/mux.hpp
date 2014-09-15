@@ -71,8 +71,8 @@ public:
   static void unregisterMux(const std::string& name);
   static MuxMap& multiplexers();
   static int send(const std::string& name, const unsigned int& id, const mm_messages::ByteArray& msg_buffer);
-//  static int createPublisher(const std::string& name, const std::string& url = "");
 };
+
 
 } // namespace mm_mux_demux
 
