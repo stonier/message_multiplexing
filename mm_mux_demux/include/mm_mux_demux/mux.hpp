@@ -73,6 +73,10 @@ public:
   static int send(const std::string& name, const unsigned int& id, const mm_messages::ByteArray& msg_buffer);
 };
 
+class RequestMuxDemux {
+public:
+
+};
 
 } // namespace mm_mux_demux
 
