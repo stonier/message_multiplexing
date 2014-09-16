@@ -1,5 +1,5 @@
 /**
- * @file /mm_mux_demux/src/pubsub.cpp
+ * @file /mm_radio/src/pubsub.cpp
  * 
  * @brief Short description of this file.
  **/
@@ -10,17 +10,16 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <ecl/time.hpp>
-#include "../../include/mm_mux_demux/mux.hpp"
-#include "../../include/mm_mux_demux/demux.hpp"
-#include "../../include/mm_mux_demux/publisher.hpp"
-#include "../../include/mm_mux_demux/subscriber.hpp"
 #include <mm_core_msgs/string.hpp>
+#include "../../../include/mm_radio/radio.hpp"
+#include "../../../include/mm_radio/publisher.hpp"
+#include "../../../include/mm_radio/subscriber.hpp"
 
 /*****************************************************************************
  ** Namespace
  *****************************************************************************/
 
-using namespace mm_mux_demux;
+using namespace mm_radio;
 
 /*****************************************************************************
 ** Registrations
@@ -43,17 +42,22 @@ struct Foo {
 ** Tests
 *****************************************************************************/
 
-TEST(MessageMuxDemux,pubsub) {
-  Foo foo;
-  mm_mux_demux::MessageMux::start("dude", "ipc:///tmp/pubsub.ipc");
-  mm_mux_demux::MessageDemux::start("dude", "ipc:///tmp/pubsub.ipc");
-  mm_mux_demux::Subscriber<TestPubSub, std::string> subscriber("dude", &Foo::foo_cb, foo);
-  mm_mux_demux::Publisher publisher("dude");
+TEST(mm_radio, pubsub) {
+  Foo old_timer_foo, old_man_foo;
+  const std::string inproc_address = "inproc://radio";
+  Radio::startServer("oldman", inproc_address);
+  Radio::startClient("oldtimer", inproc_address);
+  Subscriber<TestPubSub, std::string> oldtimer_subscriber("oldtimer", &Foo::foo_cb, old_timer_foo);
+  Subscriber<TestPubSub, std::string> oldman_subscriber("oldman", &Foo::foo_cb, old_man_foo);
+  Publisher oldtimer_publisher("oldtimer");
+  Publisher oldman_publisher("oldman");
   ecl::MilliSleep()(200); // let the connection establish itself
-  publisher.publish(TestPubSub, std::string("dude"));
+  oldtimer_publisher.publish(TestPubSub, std::string("hey old man"));
+  oldman_publisher.publish(TestPubSub, std::string("aye carumba"));
   ecl::MilliSleep()(500);
-  EXPECT_EQ(std::string("dude"), foo.foo_msg);
-  mm_mux_demux::MessageDemux::shutdown("dude");
+  EXPECT_EQ(std::string("hey old man"), old_man_foo.foo_msg);
+  EXPECT_EQ(std::string("aye carumba"), old_timer_foo.foo_msg);
+  Radio::shutdown();
 }
 
 int main(int argc, char **argv)

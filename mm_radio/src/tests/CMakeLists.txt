@@ -1,7 +1,7 @@
 ##############################################################################
-# Subdirectories
+# Directories
 ##############################################################################
 
-add_subdirectory(lib)
-add_subdirectory(demos)
-add_subdirectory(tests)
+if(CATKIN_ENABLE_TESTING)
+  add_subdirectory(gtests)
+endif()
