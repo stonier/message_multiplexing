@@ -31,13 +31,15 @@ namespace impl {
  ** Interfaces
  *****************************************************************************/
 
-class RadioMuxDemux {
+class Radio {
 public:
-  RadioMuxDemux(const std::string& name,
-             const std::string& url,
-             const mm_messages::Verbosity::Level& verbosity=mm_messages::Verbosity::QUIET);
-  RadioMuxDemux(const RadioMuxDemux& other);
-  ~RadioMuxDemux();
+  Radio(const std::string& name,
+                const std::string& url,
+                const bool bind,
+                const mm_messages::Verbosity::Level& verbosity=mm_messages::Verbosity::QUIET
+               );
+  Radio(const Radio& other);
+  ~Radio();
 
   /********************
    ** Start/Stop
@@ -79,7 +81,7 @@ private:
   typedef std::pair<std::map<unsigned int, BufferCallbackFunction>::iterator,bool> SubscriberMapResultPair;
 
   std::string name, url;
-  int socket;
+  int socket, endpoint_id;
   mm_messages::Verbosity::Level verbosity;
   bool shutdown_requested;
   ecl::Thread thread;
@@ -100,12 +102,12 @@ namespace mm_radio {
 ** Interfaces
 *****************************************************************************/
 
-class RadioMuxDemux {
+class Radio {
 public:
-  typedef std::map<std::string, std::shared_ptr<impl::RadioMuxDemux>> RadioMap;
-  typedef std::pair<std::string, std::shared_ptr<impl::RadioMuxDemux>> RadioMapPair;
-  typedef std::map<std::string, std::shared_ptr<impl::RadioMuxDemux>>::iterator RadioMapIterator;
-  typedef std::map<std::string, std::shared_ptr<impl::RadioMuxDemux>>::const_iterator RadioMapConstIterator;
+  typedef std::map<std::string, std::shared_ptr<impl::Radio>> RadioMap;
+  typedef std::pair<std::string, std::shared_ptr<impl::Radio>> RadioMapPair;
+  typedef std::map<std::string, std::shared_ptr<impl::Radio>>::iterator RadioMapIterator;
+  typedef std::map<std::string, std::shared_ptr<impl::Radio>>::const_iterator RadioMapConstIterator;
 
   enum Errors {
     NotAvailable = -1   // when you try to connect to <name>, but <name> has not yet been started
@@ -114,9 +116,12 @@ public:
   /********************
    ** Registration
    ********************/
-  static void start(const std::string& name,
-                    const std::string& url,
-                    const mm_messages::Verbosity::Level& verbosity=mm_messages::Verbosity::QUIET);
+  static void startServer(const std::string& name,
+                          const std::string& url,
+                          const mm_messages::Verbosity::Level& verbosity=mm_messages::Verbosity::QUIET);
+  static void startClient(const std::string& name,
+                          const std::string& url,
+                          const mm_messages::Verbosity::Level& verbosity=mm_messages::Verbosity::QUIET);
   static RadioMap& radios();
 
   /********************
@@ -151,8 +156,8 @@ public:
      void (C::*processPacket)(const unsigned char*, const unsigned int&),
      C &s)
  {
-   RadioMapIterator iter = RadioMuxDemux::radios().find(name);
-   if ( iter != RadioMuxDemux::radios().end() ) {
+   RadioMapIterator iter = Radio::radios().find(name);
+   if ( iter != Radio::radios().end() ) {
      (iter->second)->registerSubscriber(id, &C::processPacket, s);
    } else {
      std::cout << "Radio : no radio by that name found (while registering subscriber)"<< std::endl;

@@ -24,9 +24,11 @@ namespace impl {
 ** Implementation
 *****************************************************************************/
 
-RadioMuxDemux::RadioMuxDemux(const std::string& name,
+Radio::Radio(const std::string& name,
                              const std::string& url,
-                             const mm_messages::Verbosity::Level& verbosity) :
+                             const bool bind,
+                             const mm_messages::Verbosity::Level& verbosity
+                            ) :
   name(name),
   url(url),
   verbosity(verbosity),
@@ -38,16 +40,38 @@ RadioMuxDemux::RadioMuxDemux(const std::string& name,
     std::cout << "Radio socket error: " << nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
   }
   nn_setsockopt (socket, NN_SOL_SOCKET, NN_SOCKET_NAME, name.c_str(), name.size());
-  int unused_endpoint_id = nn_bind(socket, url.c_str());
-  if (unused_endpoint_id < 0) {
+  if ( bind ) {
+    endpoint_id = nn_bind(socket, url.c_str());
+  } else {
+    endpoint_id = nn_connect(socket, url.c_str());
+  }
+  if (endpoint_id < 0) {
     // TODO : throw exception
-    std::cout << "Radio bind error: " << nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
+    if ( bind ) {
+      std::cout << "Radio bind error: " << nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
+    } else {
+      std::cout << "Radio connect error: " << nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
+    }
   }
   // TODO : check the result, throw exceptions if necessary
+  if (verbosity > mm_messages::Verbosity::QUIET) {
+
+    std::cout << "[" << ecl::TimeStamp() << "] Radio : [" << name << "][" << url << "][" << socket << "][" << endpoint_id << "]";
+    if ( bind ) {
+      std::cout << "[bind]" << std::endl;
+    } else {
+      std::cout << "[connect]" << std::endl;
+    }
+  }
+  // std::thread call, need c++11
+  // thread = std::thread(&MessageDemux::spin, this);
+  // ecl::Thread call
+  thread.start(&Radio::spin, *this);
 }
 
-RadioMuxDemux::RadioMuxDemux(const RadioMuxDemux& other) {
+Radio::Radio(const Radio& other) {
   socket = other.socket;
+  endpoint_id = other.endpoint_id;
   name = other.name;
   verbosity = other.verbosity;
   shutdown_requested = other.shutdown_requested;
@@ -55,7 +79,7 @@ RadioMuxDemux::RadioMuxDemux(const RadioMuxDemux& other) {
   std::move(other.thread);
 }
 
-RadioMuxDemux::~RadioMuxDemux() {
+Radio::~Radio() {
   if ( socket > 0 ) {
     // only possible to have one connection to a pair at any one time
     // so don't worry about using nn_shutdown with endpoint ids.
@@ -73,7 +97,7 @@ RadioMuxDemux::~RadioMuxDemux() {
   mutex.unlock();
 }
 
-void RadioMuxDemux::spin() {
+void Radio::spin() {
   // this is almost identical to the Demux spin (only Subscriber type is different)
   while (!shutdown_requested)
   {
@@ -115,7 +139,7 @@ void RadioMuxDemux::spin() {
  * nn_recv will block indefinitely. Even after nn_shutdown is called, it will
  * hang around.
  */
-void RadioMuxDemux::shutdown() {
+void Radio::shutdown() {
   if ( socket > 0 ) {
     int result = close (socket);
   }
@@ -125,14 +149,14 @@ void RadioMuxDemux::shutdown() {
   }
 }
 
-void RadioMuxDemux::unregisterSubscriber(const unsigned int& id)
+void Radio::unregisterSubscriber(const unsigned int& id)
 {
   mutex.lock();
   subscribers.erase(id);
   mutex.unlock();
 }
 
-int RadioMuxDemux::send(const unsigned int& id, const mm_messages::ByteArray& msg_buffer) {
+int Radio::send(const unsigned int& id, const mm_messages::ByteArray& msg_buffer) {
   // this is identical to MessageMux's send (could be collapsed)
   mm_messages::ByteArray buffer;
   mm_messages::Message<mm_messages::PacketHeader>::encode(mm_messages::PacketHeader(), buffer);
@@ -148,10 +172,8 @@ int RadioMuxDemux::send(const unsigned int& id, const mm_messages::ByteArray& ms
     std::cout << std::dec;
     std::cout << "]" << std::endl;
   }
-  std::cout << "nn_send [" << socket << "]" << std::endl;
   int result = ::nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
   // TODO : lots of error flags to check here
-  std::cout << "nn_send done " << result << std::endl;
   return 0;
 }
 
@@ -169,11 +191,11 @@ namespace mm_radio {
 *****************************************************************************/
 
 /**
- * @brief Pre-establish named connections.
+ * @brief Pre-establish named connections for a server.
  * @param name
  * @param url
  */
-void RadioMuxDemux::start(const std::string& name,
+void Radio::startServer(const std::string& name,
                           const std::string& url,
                           const mm_messages::Verbosity::Level& verbosity) {
   RadioMapConstIterator iter = radios().find(name);
@@ -183,19 +205,41 @@ void RadioMuxDemux::start(const std::string& name,
     } else {
       std::pair<RadioMapIterator,bool> result;
       result = radios().insert(
-          RadioMapPair(name, std::make_shared<impl::RadioMuxDemux>(name, url, verbosity)));
+          RadioMapPair(name, std::make_shared<impl::Radio>(name, url, true, verbosity)));
     }
   } else if ( !url.empty() ) {
     // TODO : throw an exception, name-url already present.
   }
 }
 
-RadioMuxDemux::RadioMap& RadioMuxDemux::radios() {
-  static RadioMuxDemux::RadioMap map;
+/**
+ * @brief Pre-establish named connections for a client
+ * @param name
+ * @param url
+ */
+void Radio::startClient(const std::string& name,
+                          const std::string& url,
+                          const mm_messages::Verbosity::Level& verbosity) {
+  RadioMapConstIterator iter = radios().find(name);
+  if ( iter == radios().end() ) {
+    if (url.empty()) {
+      // TODO : throw an exception
+    } else {
+      std::pair<RadioMapIterator,bool> result;
+      result = radios().insert(
+          RadioMapPair(name, std::make_shared<impl::Radio>(name, url, false, verbosity)));
+    }
+  } else if ( !url.empty() ) {
+    // TODO : throw an exception, name-url already present.
+  }
+}
+
+Radio::RadioMap& Radio::radios() {
+  static Radio::RadioMap map;
   return map;
 }
 
-int RadioMuxDemux::send(const std::string& name, const unsigned int& id, const mm_messages::ByteArray& msg_buffer) {
+int Radio::send(const std::string& name, const unsigned int& id, const mm_messages::ByteArray& msg_buffer) {
   RadioMapIterator iter = radios().find(name);
   if ( iter != radios().end() ) {
     return (iter->second)->send(id, msg_buffer);
@@ -206,22 +250,21 @@ int RadioMuxDemux::send(const std::string& name, const unsigned int& id, const m
   }
 }
 
-void RadioMuxDemux::shutdown(const std::string& name) {
+void Radio::shutdown(const std::string& name) {
   radios().erase(name);
-
 }
 
-void RadioMuxDemux::shutdown() {
+void Radio::shutdown() {
   radios().clear();
 }
 
-void RadioMuxDemux::unregisterSubscriber(const std::string& name, const unsigned int& id)
+void Radio::unregisterSubscriber(const std::string& name, const unsigned int& id)
 {
   RadioMapIterator iter = radios().find(name);
   if ( iter != radios().end() ) {
     (iter->second)->unregisterSubscriber(id);
   } else {
-    std::cout << "Radio : no radio by that name found (while unregistering subscriber)"<< std::endl;
+    // quietly pass - this will only occur if a subscriber self destructs after the radio is shut down
   }
 }
 

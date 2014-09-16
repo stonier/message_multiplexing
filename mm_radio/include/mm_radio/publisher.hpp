@@ -28,7 +28,7 @@
 
 namespace mm_radio {
 
-typedef mm_messages::Publisher<RadioMuxDemux> Publisher;
+typedef mm_messages::Publisher<Radio> Publisher;
 
 } // namespace mm_radio
 

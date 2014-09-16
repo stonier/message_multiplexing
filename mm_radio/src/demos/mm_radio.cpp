@@ -55,7 +55,7 @@ int main(int argc, char **argv)
   const std::string ipc_address = "ipc:///tmp/radio.ipc";
   //bool result = mm_messages::MessageRegistry::add<mm_core_msgs::TestStrings, std::string>("mm_radio teststrings packet");
   if ( oldman.isSet() ) {
-    mm_radio::RadioMuxDemux::start("oldman", ipc_address, mm_messages::Verbosity::QUIET);
+    mm_radio::Radio::startServer("oldman", ipc_address, mm_messages::Verbosity::QUIET);
     mm_radio::Subscriber<mm_core_msgs::TestStrings, std::string> oldman_subscriber("oldman", oldman_foo);
 //    mm_radio::Publisher oldman_publisher("oldman");
     while(true) {
@@ -64,29 +64,31 @@ int main(int argc, char **argv)
       ecl::MilliSleep()(500);
     }
   } else if ( oldtimer.isSet() ) {
-    mm_radio::RadioMuxDemux::start("oldtimer", ipc_address, mm_messages::Verbosity::HIGH);
+    mm_radio::Radio::startClient("oldtimer", ipc_address, mm_messages::Verbosity::HIGH);
     //mm_radio::Subscriber<mm_core_msgs::TestStrings, std::string> oldtimer_subscriber("oldtimer", oldtimer_foo);
-    mm_radio::Publisher oldtimer_publisher("oldtimer", ipc_address);
+    mm_radio::Publisher oldtimer_publisher("oldtimer");
     while(true) {
       std::cout << "Oldtimer publishing : 'hello old man'" << std::endl;
       oldtimer_publisher.publish(mm_core_msgs::TestStrings, std::string("hello old man"));
       std::cout << "Oldtimer published"<< std::endl;
       ecl::MilliSleep()(500);
     }
-    mm_radio::RadioMuxDemux::shutdown(); // shutdown all named radios
+    mm_radio::Radio::shutdown(); // shutdown all named radios
   } else if ( both.isSet() ) {
-    mm_radio::RadioMuxDemux::start("oldman", inproc_address);
-    mm_radio::RadioMuxDemux::start("oldtimer", inproc_address);
+    mm_radio::Radio::startServer("oldman", inproc_address);
+    mm_radio::Radio::startClient("oldtimer", inproc_address);
     mm_radio::Subscriber<mm_core_msgs::TestStrings, std::string> oldtimer_subscriber("oldtimer", oldtimer_foo);
     mm_radio::Subscriber<mm_core_msgs::TestStrings, std::string> oldman_subscriber("oldman", oldman_foo);
     mm_radio::Publisher oldtimer_publisher("oldtimer");
     mm_radio::Publisher oldman_publisher("oldman");
     ecl::MilliSleep()(200); // let the connection establish itself
-    oldtimer_publisher.publish(mm_core_msgs::TestStrings, std::string("hello old man"));
-    ecl::MilliSleep()(500);
-    oldman_publisher.publish(mm_core_msgs::TestStrings, std::string("aye carumba"));
-    ecl::MilliSleep()(500);
-    mm_radio::RadioMuxDemux::shutdown(); // shutdown all named radios
+    for ( unsigned int i = 0; i < 4; ++i ) {
+      oldtimer_publisher.publish(mm_core_msgs::TestStrings, std::string("hello old man"));
+      ecl::MilliSleep()(500);
+      oldman_publisher.publish(mm_core_msgs::TestStrings, std::string("aye carumba"));
+      ecl::MilliSleep()(500);
+    }
+    mm_radio::Radio::shutdown(); // shutdown all named radios
 //  } else {
 //    // should never get here because tclap will throw up the usage page.
   }

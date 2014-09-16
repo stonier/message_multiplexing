@@ -59,7 +59,7 @@ public:
       ss << "id '" << id << "' is registered, but not with this type";
       throw mm_messages::InvalidIDTypeCombination(ss.str());
     }
-    RadioMuxDemux::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
+    Radio::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
   }
   /**
    * Construct with a callback to a member function.
@@ -77,10 +77,10 @@ public:
     id(ID),
     function(new ecl::PartiallyBoundUnaryMemberFunction<C, DataType,void>(f,c))
   {
-    RadioMuxDemux::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
+    Radio::registerSubscriber(name, id, &Subscriber<ID, DataType>::processPacket, (*this));
   }
   virtual ~Subscriber() {
-    RadioMuxDemux::unregisterSubscriber(name, id);
+    Radio::unregisterSubscriber(name, id);
     delete function;
   }
 
