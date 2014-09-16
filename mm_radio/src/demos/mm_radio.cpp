@@ -24,11 +24,11 @@
 *****************************************************************************/
 
 void oldtimer_foo(std::string data) {
-  std::cout << "oldtimer_foo is processing data: " << data << std::endl;
+  std::cout << "oldtimer_foo : processing data: " << data << std::endl;
 }
 
 void oldman_foo(std::string data) {
-  std::cout << "oldman_foo is processing data: " << data << std::endl;
+  std::cout << "oldman_foo : processing data: " << data << std::endl;
 }
 
 /*****************************************************************************
@@ -57,20 +57,17 @@ int main(int argc, char **argv)
   if ( oldman.isSet() ) {
     mm_radio::Radio::startServer("oldman", ipc_address, mm_messages::Verbosity::QUIET);
     mm_radio::Subscriber<mm_core_msgs::TestStrings, std::string> oldman_subscriber("oldman", oldman_foo);
-//    mm_radio::Publisher oldman_publisher("oldman");
+    mm_radio::Publisher oldman_publisher("oldman");
     while(true) {
-//      std::cout << "Oldman publishing : 'aye curamba'" << std::endl;
-//      oldman_publisher.publish(mm_core_msgs::TestStrings, std::string("aye carumba"));
+      oldman_publisher.publish(mm_core_msgs::TestStrings, std::string("aye carumba"));
       ecl::MilliSleep()(500);
     }
   } else if ( oldtimer.isSet() ) {
-    mm_radio::Radio::startClient("oldtimer", ipc_address, mm_messages::Verbosity::HIGH);
-    //mm_radio::Subscriber<mm_core_msgs::TestStrings, std::string> oldtimer_subscriber("oldtimer", oldtimer_foo);
+    mm_radio::Radio::startClient("oldtimer", ipc_address, mm_messages::Verbosity::QUIET);
+    mm_radio::Subscriber<mm_core_msgs::TestStrings, std::string> oldtimer_subscriber("oldtimer", oldtimer_foo);
     mm_radio::Publisher oldtimer_publisher("oldtimer");
     while(true) {
-      std::cout << "Oldtimer publishing : 'hello old man'" << std::endl;
       oldtimer_publisher.publish(mm_core_msgs::TestStrings, std::string("hello old man"));
-      std::cout << "Oldtimer published"<< std::endl;
       ecl::MilliSleep()(500);
     }
     mm_radio::Radio::shutdown(); // shutdown all named radios
@@ -89,8 +86,6 @@ int main(int argc, char **argv)
       ecl::MilliSleep()(500);
     }
     mm_radio::Radio::shutdown(); // shutdown all named radios
-//  } else {
-//    // should never get here because tclap will throw up the usage page.
   }
   return 0;
 }
