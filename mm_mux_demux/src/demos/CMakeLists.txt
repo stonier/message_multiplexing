@@ -7,6 +7,7 @@ macro(${PROJECT_NAME}_add_demo name)
   add_executable(${target_name} ${name}.cpp)
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME ${name})
   target_link_libraries(${target_name} ${PROJECT_NAME} ${catkin_LIBRARIES})
+  install(TARGETS ${target_name} RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 endmacro()
 
 ##############################################################################
