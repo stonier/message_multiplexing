@@ -14,7 +14,6 @@
 ** Includes
 *****************************************************************************/
 
-#include <ecl/time.hpp>
 #include <iostream>
 #include "exceptions.hpp"
 #include "registry.hpp"
