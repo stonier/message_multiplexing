@@ -15,6 +15,7 @@
 *****************************************************************************/
 
 #include <cstddef>
+#include <memory>
 #include <mm_messages/message.hpp>
 
 /*****************************************************************************
@@ -28,6 +29,8 @@ namespace mm_core_msgs {
  *****************************************************************************/
 
 struct Empty {};
+
+typedef std::shared_ptr<Empty> EmptyPtr;
 
 } // namespace mm_core_msgs
 
@@ -44,7 +47,7 @@ namespace mm_messages {
 template<>
 struct Message<mm_core_msgs::Empty> {
   static void encode(const mm_core_msgs::Empty& nothing_to_see_here, ByteArray& buffer);
-  static std::string decode(const unsigned char* buffer, const unsigned int& size = 0);
+  static mm_core_msgs::Empty decode(const unsigned char* buffer, const unsigned int& size = 0);
 };
 
 
