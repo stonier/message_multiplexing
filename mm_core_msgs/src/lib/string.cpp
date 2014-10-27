@@ -1,7 +1,5 @@
 /**
- * @file /mm_core_msgs/src/lib/messages/core.cpp
- * 
- * @brief Short description of this file.
+ * @file /mm_core_msgs/src/lib/messages/string.cpp
  **/
 /*****************************************************************************
 ** Includes
