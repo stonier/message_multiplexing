@@ -24,12 +24,18 @@
 namespace mm_messages {
 
 /*****************************************************************************
+ ** Typedefs
+ *****************************************************************************/
+
+typedef std::nullptr Empty;
+
+/*****************************************************************************
 ** Interfaces
 *****************************************************************************/
 
 template<>
-struct Message<std::nullptr> {
-  static void encode(const std::nullptr& nothing_to_see_here, ByteArray& buffer);
+struct Message<Empty> {
+  static void encode(const Empty& nothing_to_see_here, ByteArray& buffer);
   static std::string decode(const unsigned char* buffer, const unsigned int& size = 0);
 };
 
