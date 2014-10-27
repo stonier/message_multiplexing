@@ -7,6 +7,7 @@
 ** Includes
 *****************************************************************************/
 
+#include <ecl/exceptions.hpp>
 #include <mm_messages.hpp>
 #include <nanomsg/nn.h>
 #include <nanomsg/pair.h>
@@ -39,7 +40,13 @@ Radio::Radio(const std::string& name,
     // TODO : throw exception
     std::cout << "Radio socket error: " << nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
   }
-  nn_setsockopt (socket, NN_SOL_SOCKET, NN_SOCKET_NAME, name.c_str(), name.size());
+  int result = nn_setsockopt (socket, NN_SOL_SOCKET, NN_SOCKET_NAME, name.c_str(), name.size());
+  if ( result < 0 ) {
+    // TODO : throw exception
+    std::cout << "Radio nn_setsockopt error: " <<  nn_strerror(errno) << " [" << nn_errno() << "][" << name << "][" << url << "]" << std::endl;
+  }
+  int send_timeout_ms = 5000;
+  result = nn_setsockopt (socket, NN_SOL_SOCKET, NN_SNDTIMEO, &send_timeout_ms, sizeof(send_timeout_ms));
   if ( bind ) {
     endpoint_id = nn_bind(socket, url.c_str());
   } else {
@@ -173,7 +180,14 @@ int Radio::send(const unsigned int& id, const mm_messages::ByteArray& msg_buffer
     std::cout << "]" << std::endl;
   }
   int result = ::nn_send(socket, buffer.data(), buffer.size(), 0); // last option is flags, only NN_DONTWAIT available
-  // TODO : lots of error flags to check here
+  if ( result == -1 ) {
+    int error_number = nn_errno();
+    // TODO : lots of error flags to check here
+    if ( ( error_number == EAGAIN ) || ( error_number == ETIMEDOUT ) ) {
+      std::cout << "[" << ecl::TimeStamp() << "] RadioMux : timed out trying to send a message [" << name << "][" << url << "]" << std::endl;
+      throw ecl::StandardException(LOC, ecl::TimeOutError, std::string("timed out trying to send a message [") + name + std::string("][") + url + std::string("]"));
+    }
+  }
   return 0;
 }
 

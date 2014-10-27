@@ -12,6 +12,7 @@ project(mm_radio)
 find_package(catkin REQUIRED COMPONENTS
     ecl_build
     ecl_command_line
+    ecl_exceptions
     ecl_threads
     ecl_time
     ecl_utilities
@@ -30,6 +31,7 @@ catkin_package(
     CATKIN_DEPENDS
         ecl_build
         ecl_command_line
+        ecl_exceptions
         ecl_threads
         ecl_time
         ecl_utilities
