@@ -21,21 +21,29 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace mm_messages {
+namespace mm_core_msgs {
 
 /*****************************************************************************
  ** Typedefs
  *****************************************************************************/
 
-typedef std::nullptr Empty;
+struct Empty {};
+
+} // namespace mm_core_msgs
+
+/*****************************************************************************
+** Namespaces
+*****************************************************************************/
+
+namespace mm_messages {
 
 /*****************************************************************************
 ** Interfaces
 *****************************************************************************/
 
 template<>
-struct Message<Empty> {
-  static void encode(const Empty& nothing_to_see_here, ByteArray& buffer);
+struct Message<mm_core_msgs::Empty> {
+  static void encode(const mm_core_msgs::Empty& nothing_to_see_here, ByteArray& buffer);
   static std::string decode(const unsigned char* buffer, const unsigned int& size = 0);
 };
 
