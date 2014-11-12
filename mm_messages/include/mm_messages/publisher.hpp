@@ -15,6 +15,7 @@
 *****************************************************************************/
 
 #include <iostream>
+#include <ecl/exceptions.hpp>
 #include "exceptions.hpp"
 #include "registry.hpp"
 #include <sstream>
@@ -72,7 +73,16 @@ public:
     }
     ByteArray buffer;
     mm_messages::Message<T>::encode(msg, buffer);
-    int result = Multiplexer::send(name, id, buffer);
+    try {
+      int result = Multiplexer::send(name, id, buffer);  // this throws ecl::StandardException(ecl::TimeOutError)
+    } catch (ecl::StandardException &e) {
+      if ( e.flag() == ecl::TimeOutError ) {
+        // quiet...could use this to update internally so that it knows there is a client or not.
+        // could pass a boolean to this flag so that it knows to be verbose.
+      } else {
+        throw ecl::StandardException(e);
+      }
+    }
   }
 
 private:

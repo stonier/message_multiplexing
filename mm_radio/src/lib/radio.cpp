@@ -26,10 +26,10 @@ namespace impl {
 *****************************************************************************/
 
 Radio::Radio(const std::string& name,
-                             const std::string& url,
-                             const bool bind,
-                             const mm_messages::Verbosity::Level& verbosity
-                            ) :
+             const std::string& url,
+             const bool bind,
+             const mm_messages::Verbosity::Level& verbosity
+            ) :
   name(name),
   url(url),
   verbosity(verbosity),
@@ -184,7 +184,7 @@ int Radio::send(const unsigned int& id, const mm_messages::ByteArray& msg_buffer
     int error_number = nn_errno();
     // TODO : lots of error flags to check here
     if ( ( error_number == EAGAIN ) || ( error_number == ETIMEDOUT ) ) {
-      std::cout << "[" << ecl::TimeStamp() << "] RadioMux : timed out trying to send a message [" << name << "][" << url << "]" << std::endl;
+      //std::cout << "[" << ecl::TimeStamp() << "] RadioMux : timed out trying to send a message [" << name << "][" << url << "]" << std::endl;
       throw ecl::StandardException(LOC, ecl::TimeOutError, std::string("timed out trying to send a message [") + name + std::string("][") + url + std::string("]"));
     }
   }
