@@ -18,6 +18,7 @@
 #include <ecl/time/timestamp.hpp>
 #include <mm_messages/message.hpp>
 #include <memory>
+#include <string>
 #include <vector>
 
 /*****************************************************************************
@@ -25,6 +26,22 @@
 *****************************************************************************/
 
 namespace mm_vision_msgs {
+
+/**
+ * Should probably use something closer to opencv definitions here,
+ * but this keeps it simple for our use case and very easily readable.
+ *
+ * We don't use this directly for the image class below, but it has uses
+ * elsewhere (e.g. request image type mode).
+ */
+enum ImageType {
+  QVGA,  /**< 320x240 gray **/
+  CQVGA, /**< 320x240 colour **/
+  VGA,   /**< 640x480 gray **/
+  CVGA,  /**< 640x480 colour **/
+};
+
+std::string imageType2String(const ImageType& image_type);
 
 /*****************************************************************************
 ** Image Definitions

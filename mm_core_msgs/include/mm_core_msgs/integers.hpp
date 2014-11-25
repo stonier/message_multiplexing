@@ -20,19 +20,23 @@
 ** Namespaces
 *****************************************************************************/
 
-namespace mm_messages {
+namespace mm_core_msgs {
 
 typedef unsigned char uint8;
 typedef signed char int8;
 
+} // namespace mm_core_msgs
+
 /*****************************************************************************
-** Integers
+** Namespaces
 *****************************************************************************/
 
+namespace mm_messages {
+
 template<>
-struct Message<uint8> {
-  static void encode(const uint8& i, ByteArray& buffer);
-  static uint8 decode(const unsigned char* buffer, const unsigned int& size = 1);
+struct Message<mm_core_msgs::uint8> {
+  static void encode(const mm_core_msgs::uint8& i, ByteArray& buffer);
+  static mm_core_msgs::uint8 decode(const unsigned char* buffer, const unsigned int& size = 1);
 };
 
 } // namespace mm_messages

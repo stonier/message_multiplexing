@@ -18,7 +18,7 @@ namespace mm_messages {
 ** Implementation
 *****************************************************************************/
 
-void Message<uint8>::encode(const uint8& s, ByteArray& buffer) {
+void Message<mm_core_msgs::uint8>::encode(const mm_core_msgs::uint8& s, ByteArray& buffer) {
   // publishers always send empty buffers, but in case others use this
   if(!buffer.empty()) {
     buffer.clear();
@@ -26,7 +26,7 @@ void Message<uint8>::encode(const uint8& s, ByteArray& buffer) {
   buffer.push_back(s);
 }
 
-uint8 Message<uint8>::decode(const unsigned char* buffer, const unsigned int& size) {
+mm_core_msgs::uint8 Message<mm_core_msgs::uint8>::decode(const unsigned char* buffer, const unsigned int& size) {
   return *buffer;
 }
 } // namespace mm_messages

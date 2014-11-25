@@ -7,7 +7,30 @@
 ** Includes
 *****************************************************************************/
 
+#include <string>
 #include "../../include/mm_vision_msgs/image.hpp"
+
+/*****************************************************************************
+** Namespaces
+*****************************************************************************/
+
+namespace mm_vision_msgs {
+
+/*****************************************************************************
+** Utilities
+*****************************************************************************/
+
+std::string imageType2String(const ImageType& image_type) {
+  switch( image_type ) {
+    case ( ImageType::QVGA )  : return std::string("QVGA");
+    case ( ImageType::CQVGA ) : return std::string("CQVGA");
+    case ( ImageType::VGA )   : return std::string("VGA");
+    case ( ImageType::CVGA )  : return std::string("CVGA");
+    default : return "Unknown";
+  }
+}
+
+} // namespace mm_vision_msgs
 
 /*****************************************************************************
 ** Namespaces
