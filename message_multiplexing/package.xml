@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <name>message_multiplexing</name>
+  <version>0.2.1</version>
+  <description>
+    Lightweight communication patterns built on top of nanomsg for
+    use in embedded scenarios where only a single socket connection is desirable.
+  </description>
+  <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
+  <license>BSD</license>
+  <url type="website">http://wiki.ros.org/message_multiplexing</url>
+  <url type="repository">http://github.com/stonier/message_multiplexing</url>
+  <url type="bugtracker">http://github.com/stonier/message_multiplexing/issues</url>
+  <author>Daniel Stonier</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>mm_core_msgs</run_depend>
+  <run_depend>mm_eigen_msgs</run_depend>
+  <run_depend>mm_messages</run_depend>
+  <run_depend>mm_mux_demux</run_depend>
+  <run_depend>mm_radio</run_depend>
+  <run_depend>mm_vision_msgs</run_depend>
+  
+  <export>
+    <metapackage/>
+  </export>
+</package>
+

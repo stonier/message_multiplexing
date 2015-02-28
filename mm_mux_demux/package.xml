@@ -1,6 +1,6 @@
 <package>
   <name>mm_mux_demux</name>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   <description>
    Multiplexing many packet types across a single connection. Great for embedded connections
    by serial or ethernet types.
