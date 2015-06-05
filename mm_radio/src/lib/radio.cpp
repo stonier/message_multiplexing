@@ -121,9 +121,9 @@ void Radio::spin() {
     mm_messages::SubPacketHeader subheader = mm_messages::Message<mm_messages::SubPacketHeader>::decode(buffer + mm_messages::PacketHeader::size, mm_messages::SubPacketHeader::size);
     if ( verbosity > mm_messages::Verbosity::QUIET ) {
       std::cout << "[" << ecl::TimeStamp() << "] RadioDemux: [" << subheader.id << "]";
-      std::cout << "[" << bytes << "][";
+      std::cout << "[" << bytes << "]";
       if ( verbosity > mm_messages::Verbosity::LOW ) {
-        std::cout << std::hex;
+        std::cout << "[" << std::hex;
         for(unsigned int i=0; i < bytes; ++i ) {
           std::cout << static_cast<unsigned int>(*(buffer+i)) << " ";
         }
