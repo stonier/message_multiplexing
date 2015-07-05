@@ -19,8 +19,7 @@
   <run_depend>mm_messages</run_depend>
   <run_depend>mm_mux_demux</run_depend>
   <run_depend>mm_radio</run_depend>
-  <run_depend>mm_vision_msgs</run_depend>
-  
+
   <export>
     <metapackage/>
   </export>
