@@ -87,7 +87,7 @@ Radio::Radio(const Radio& other) {
 }
 
 Radio::~Radio() {
-  if ( socket > 0 ) {
+  if ( socket >= 0 ) {
     // only possible to have one connection to a pair at any one time
     // so don't worry about using nn_shutdown with endpoint ids.
     nn_close(socket);
@@ -237,6 +237,7 @@ void Radio::startClient(const std::string& name,
   RadioMapConstIterator iter = radios().find(name);
   if ( iter == radios().end() ) {
     if (url.empty()) {
+      std::cout << "mm::Radio::startClient : url is empty" << std::endl;
       // TODO : throw an exception
     } else {
       std::pair<RadioMapIterator,bool> result;
@@ -244,6 +245,7 @@ void Radio::startClient(const std::string& name,
           RadioMapPair(name, std::make_shared<impl::Radio>(name, url, false, verbosity)));
     }
   } else if ( !url.empty() ) {
+    std::cout << "mm::Radio::startClient : already radio in the map [" << name << "][" << url << "]" << std::endl;
     // TODO : throw an exception, name-url already present.
   }
 }
