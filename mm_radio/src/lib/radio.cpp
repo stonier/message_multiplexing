@@ -1,6 +1,6 @@
 /**
  * @file /mm_radio/src/lib/radio.cpp
- * 
+ *
  * @brief Short description of this file.
  **/
 /*****************************************************************************
