@@ -1,6 +1,6 @@
 /**
  * @file /mm_messages/include/mm_messages/registry.hpp
- * 
+ *
  * @brief Short description of this file.
  **/
 /*****************************************************************************
@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string>
 #include "exceptions.hpp"
+#include "verbosity.hpp"
 
 /*****************************************************************************
 ** Namespaces
@@ -41,10 +42,14 @@ public:
   static bool add(const std::string &description="") {
     if (ids().insert( std::pair<int, std::string>(ID, description)).second) {
       add_by_type<T>(ID);
-      std::cout << "Registering message packet.............[" << ID << " : '" << description << "']" << std::endl;
+      #ifdef MM_DEBUG_REGISTRY
+        std::cout << "Registering message packet.............[" << ID << " : '" << description << "']" << std::endl;
+      #endif
       return true;
     } else {
-      std::cout << "Registering message packet failed......[" << ID << " : '" << description << "']" << std::endl;
+      #ifdef MM_DEBUG_REGISTRY
+        std::cout << "Registering message packet failed......[" << ID << " : '" << description << "']" << std::endl;
+      #endif
       return false;
     }
   }
