@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>message_multiplexing</name>
-  <version>0.2.3</version>
+  <version>0.2.4</version>
   <description>
     Lightweight communication patterns built on top of nanomsg for
     use in embedded scenarios where only a single socket connection is desirable.

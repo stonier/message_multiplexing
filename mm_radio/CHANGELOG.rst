@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Forthcoming
------------
+0.2.4 (2016-06-16)
+------------------
 * bugfix for socket closing - was leaving sockets with id=0 hanging.
 
 0.2.2 (2015-10-10)
